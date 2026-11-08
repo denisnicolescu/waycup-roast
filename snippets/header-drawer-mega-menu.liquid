@@ -1,0 +1,158 @@
+{% comment %}
+  Renders a mega menu block inside the drawer.
+
+  Accepts:
+  - menu: link_list object
+  - block: block object
+{% endcomment %}
+
+{% assign menu = block.settings.menu %}
+
+{% if menu.links != blank %}
+  <li {{ block.shopify_attributes }}>
+    <details id="DrawerDetails-{{ block.id }}">
+      <summary
+        class="menu-drawer__menu-item list-menu__item link link--text focus-inset"
+        id="DrawerSummary-{{ block.id }}"
+      >
+        {{ menu.title | escape }}
+        <span class="svg-wrapper">{{ 'icon-arrow.svg' | inline_asset_content }}</span>
+        <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
+      </summary>
+
+      <div class="menu-drawer__submenu has-submenu gradient motion-reduce" tabindex="-1">
+        <div class="menu-drawer__inner-submenu">
+          <button class="menu-drawer__close-button link link--text focus-inset" aria-expanded="true">
+            <span class="svg-wrapper">{{ 'icon-arrow.svg' | inline_asset_content }}</span>
+            {{ menu.title | escape }}
+          </button>
+
+          <ul class="menu-drawer__menu list-menu" role="list" tabindex="-1">
+            {% for link in menu.links %}
+              <li>
+                {% if link.links != blank %}
+                  <details id="DrawerDetails-{{ block.id }}-{{ forloop.index }}">
+                    <summary
+                      class="menu-drawer__menu-item link link--text list-menu__item focus-inset"
+                      id="DrawerSummary-{{ block.id }}-{{ forloop.index }}"
+                    >
+                      {{ link.title | escape }}
+                      <span class="svg-wrapper">{{ 'icon-arrow.svg' | inline_asset_content }}</span>
+                      <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
+                    </summary>
+                    <div class="menu-drawer__submenu has-submenu gradient motion-reduce">
+                      <div class="menu-drawer__inner-submenu">
+                        <button class="menu-drawer__close-button link link--text focus-inset" aria-expanded="true">
+                          <span class="svg-wrapper">{{ 'icon-arrow.svg' | inline_asset_content }}</span>
+                          {{ link.title | escape }}
+                        </button>
+
+                        <ul class="menu-drawer__menu list-menu" role="list">
+                          {% for sublink in link.links %}
+                            <li>
+                              {% if sublink.links != blank %}
+                                <details id="DrawerDetails-{{ block.id }}-{{ forloop.parentloop.index }}-{{ forloop.index }}">
+                                  <summary
+                                    class="menu-drawer__menu-item link link--text list-menu__item focus-inset"
+                                  >
+                                    {{ sublink.title | escape }}
+                                    <span class="svg-wrapper">{{ 'icon-arrow.svg' | inline_asset_content }}</span>
+                                    <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
+                                  </summary>
+                                  <div class="menu-drawer__submenu has-submenu gradient motion-reduce">
+                                    <div class="menu-drawer__inner-submenu">
+                                      <button class="menu-drawer__close-button link link--text focus-inset" aria-expanded="true">
+                                        <span class="svg-wrapper">{{ 'icon-arrow.svg' | inline_asset_content }}</span>
+                                        {{ sublink.title | escape }}
+                                      </button>
+
+                                      <ul class="menu-drawer__menu list-menu" role="list">
+                                        {% for subsub in sublink.links %}
+                                          <li>
+                                            <a
+                                              href="{{ subsub.url }}"
+                                              class="menu-drawer__menu-item link link--text list-menu__item focus-inset{% if subsub.current %} menu-drawer__menu-item--active{% endif %}"
+                                              {% if subsub.current %} aria-current="page" {% endif %}
+                                            >
+                                              {{ subsub.title | escape }}
+                                            </a>
+                                          </li>
+                                        {% endfor %}
+                                      </ul>
+                                    </div>
+                                  </div>
+                                </details>
+                              {% else %}
+                                <a
+                                  href="{{ sublink.url }}"
+                                  class="menu-drawer__menu-item link link--text list-menu__item focus-inset{% if sublink.current %} menu-drawer__menu-item--active{% endif %}"
+                                  {% if sublink.current %} aria-current="page" {% endif %}
+                                >
+                                  {{ sublink.title | escape }}
+                                </a>
+                              {% endif %}
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    </div>
+                  </details>
+                {% else %}
+                  <a
+                    href="{{ link.url }}"
+                    class="menu-drawer__menu-item link link--text list-menu__item focus-inset{% if link.current %} menu-drawer__menu-item--active{% endif %}"
+                    {% if link.current %} aria-current="page" {% endif %}
+                  >
+                    {{ link.title | escape }}
+                  </a>
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+
+          {% if block.settings.show_promotion_1 and block.settings.promotion_image_1 != blank %}
+            <div class="mega-menu__promotion menu-drawer__menu-item">
+              <a href="{{ block.settings.promotion_link_1 }}">
+                <img
+                  src="{{ block.settings.promotion_image_1 | image_url: width: 600 }}"
+                  srcset="
+                    {{ block.settings.promotion_image_1 | image_url: width: 300 }} 300w,
+                    {{ block.settings.promotion_image_1 | image_url: width: 600 }} 600w,
+                    {{ block.settings.promotion_image_1 | image_url: width: 900 }} 900w
+                  "
+                  sizes="100vw"
+                  alt="{{ block.settings.promotion_image_1.alt | escape }}"
+                  loading="lazy"
+                  width="600"
+                  height="400"
+                >
+              </a>
+              <div class="rte">{{ block.settings.promotion_content_1 }}</div>
+            </div>
+          {% endif %}
+
+          {% if block.settings.show_promotion_2 and block.settings.promotion_image_2 != blank %}
+            <div class="mega-menu__promotion menu-drawer__menu-item">
+              <a href="{{ block.settings.promotion_link_2 }}">
+                <img
+                  src="{{ block.settings.promotion_image_2 | image_url: width: 600 }}"
+                  srcset="
+                    {{ block.settings.promotion_image_2 | image_url: width: 300 }} 300w,
+                    {{ block.settings.promotion_image_2 | image_url: width: 600 }} 600w,
+                    {{ block.settings.promotion_image_2 | image_url: width: 900 }} 900w
+                  "
+                  sizes="100vw"
+                  alt="{{ block.settings.promotion_image_2.alt | escape }}"
+                  loading="lazy"
+                  width="600"
+                  height="400"
+                >
+              </a>
+              <div class="rte">{{ block.settings.promotion_content_2 }}</div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </details>
+  </li>
+{% endif %}

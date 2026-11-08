@@ -1,0 +1,95 @@
+.collection-menu .submenu-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+  margin: 0 auto;
+  max-width: 1024px;
+  position: relative;
+  justify-content: center;
+  max-height: calc(var(--row-height) * var(--max-rows) + (10px * (var(--max-rows) - 1)));
+  overflow: hidden;
+  opacity: 1;
+  animation: var(--animation-fade-in);
+}
+
+.collection-menu .submenu-list.visibly-hidden {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.collection-menu .submenu-list.scrollable {
+  justify-content: start;
+  overflow-x: auto; 
+}
+
+.collection-menu .submenu-row {
+  display: flex;
+  gap: 10px;
+}
+
+.collection-menu .submenu-item {
+  white-space: nowrap;
+}
+
+.collection-menu .submenu-link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.collection-menu .submenu-list--pill .submenu-item {
+  border-radius: var(--submenu-item-border-radius);
+  background-color: var(--submenu-item-bg-color);
+  color: var(--submenu-item-text-color);
+  padding: var(--submenu-item-padding);
+  border: 0.1rem solid var(--submenu-item-text-color);
+}
+
+.collection-menu .submenu-list--pill .submenu-link {
+  color: var(--submenu-item-text-color);
+}
+
+.collection-menu .submenu-list--pill .submenu-item a:hover {
+  color: rgba(var(--color-button), var(--alpha-button-background));
+}
+
+.collection-menu .submenu-list--pill .submenu-item.active {
+  background-color: rgba(var(--color-button), var(--alpha-button-background));
+  color: rgb(var(--color-button-text));
+  border-color: transparent;
+}
+
+.collection-menu .submenu-list--pill .submenu-item.active a {
+  color: rgb(var(--color-button-text));
+}
+
+.collection-menu .submenu-list--link .submenu-link {
+  color: var(--submenu-item-text-color);
+  padding: 5px 0;
+}
+
+.collection-menu .submenu-list--link .submenu-link:hover {
+  color: rgba(var(--color-button), var(--alpha-button-background));
+  text-decoration: underline;
+}
+
+.collection-menu .submenu-list--link .submenu-item.active .submenu-link {
+  color: rgba(var(--color-button), var(--alpha-button-background));
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.collection-menu .submenu-item__image {
+  width: 4.4rem;
+  height: 4.4rem;
+  object-fit: cover;
+  border-radius: var(--submenu-item-border-radius);
+  flex-shrink: 0;
+}
+
+.collection-menu-section {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}

@@ -1,0 +1,36 @@
+{% comment %}
+  Renders a product grid from a selected collection
+
+  Uses:
+  - block.settings.menu_title
+  - block.settings.collection
+  - block.settings.product_limit
+{% endcomment %}
+
+<li {{ block.shopify_attributes }}>
+    <details class="mega-menu">
+        <summary class="header__menu-item list-menu__item link focus-inset">
+        <span>{{ block.settings.menu_title }}</span>
+        {{ 'icon-caret.svg' | inline_asset_content }}
+        </summary>
+        <div class="mega-menu__content">
+        <div class="page-width mega-menu__inner">
+            {% assign collection_handle = block.settings.collection | handle %}
+            {% assign collection = collections[collection_handle] %}
+
+            <ul class="mega-menu__products list-unstyled" role="list">
+            {% for product in collection.products limit: block.settings.product_limit %}
+                <li class="mega-menu__product">
+                <a href="{{ product.url }}" class="mega-menu__product-link mega-menu__link">
+                    {% if product.featured_image %}
+                    {{ product.featured_image | image_url: width: 400 | image_tag: widths: '150,200,300,400', alt: product.title }}
+                    {% endif %}
+                    <span class="mega-menu__product-title">{{ product.title }}</span>
+                </a>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+        </div>
+    </details>
+</li>

@@ -1,0 +1,35 @@
+{%- liquid
+    if product
+        assign first_image = product.media.first
+
+        if product.selected_or_first_available_variant.featured_media != null
+            assign featured_media = product.selected_or_first_available_variant.featured_media
+            assign first_image = featured_media
+        endif
+
+        if first_image
+            assign image_href_mobile = first_image.preview_image | image_url: width: 990
+            assign image_href_desktop = first_image.preview_image | image_url: width: 1946
+
+            assign mobile_widths = '246, 493, 600, 713, 823, 990' | split: ', '
+            assign mobile_srcset = ''
+            for width in mobile_widths
+                assign image_url = first_image.preview_image | image_url: width: width
+                assign mobile_srcset = mobile_srcset | append: image_url | append: ' ' | append: width | append: 'w, '
+            endfor
+            assign mobile_srcset = mobile_srcset | remove_last: ', '
+
+            assign desktop_widths = '990, 1100, 1206, 1346, 1426, 1646, 1946' | split: ', '
+            assign desktop_srcset = ''
+            for width in desktop_widths
+                assign image_url = first_image.preview_image | image_url: width: width
+                assign desktop_srcset = desktop_srcset | append: image_url | append: ' ' | append: width | append: 'w, '
+            endfor
+            assign desktop_srcset = desktop_srcset | remove_last: ', '
+        endif
+    endif
+-%}
+{%- if product and image_href_desktop -%}
+    <link rel="preload" as="image" href="{{ image_href_mobile }}" imagesrcset="{{ mobile_srcset | escape }}" imagesizes="calc(100vw - 3rem)" media="(max-width: 749px)" fetchpriority="high">
+    <link rel="preload" as="image" href="{{ image_href_desktop }}" imagesrcset="{{ desktop_srcset | escape }}" imagesizes="calc(65vw - 5rem)" media="(min-width: 750px)" fetchpriority="high">
+{%- endif -%}

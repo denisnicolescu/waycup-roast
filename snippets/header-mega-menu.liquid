@@ -1,0 +1,106 @@
+{% comment %}
+  Renders a mega menu block with optional promo images and 3-level nested links.
+
+  Accepts:
+  - menu: the link_list to display
+  - block: the block object (for settings and schema attributes)
+
+  Usage:
+  {% render 'header-mega-menu', menu: block.settings.menu, block: block %}
+{% endcomment %}
+
+<li {{ block.shopify_attributes }}>
+  <details class="mega-menu">
+    <summary
+      class="header__menu-item list-menu__item link focus-inset"
+      id="MegaMenuToggle-{{ block.id }}"
+    >
+      <span>{{ menu.title | escape }}</span>
+      {{ 'icon-caret.svg' | inline_asset_content }}
+    </summary>
+
+    <div
+      class="mega-menu__content color-{{ section.settings.menu_color_scheme }} gradient"
+      tabindex="-1"
+      id="MegaMenuContent-{{ block.id }}"
+    >
+      <div class="page-width mega-menu__inner">
+        <ul class="mega-menu__list grid-{{ menu.links.size }}" role="list">
+          {% for link in menu.links %}
+            <li>
+              <a href="{{ link.url }}" class="mega-menu__link mega-menu__link--level-2 link{% if link.current %} mega-menu__link--active{% endif %}">
+                {{ link.title | escape }}
+              </a>
+
+              {% if link.links != blank %}
+                <ul class="list-unstyled" role="list">
+                  {% for sublink in link.links %}
+                    <li>
+                      <a href="{{ sublink.url }}" class="mega-menu__link mega-menu__link--level-3 link{% if sublink.current %} mega-menu__link--active{% endif %}">
+                        {{ sublink.title | escape }}
+                      </a>
+
+                      {% if sublink.links != blank %}
+                        <ul class="list-unstyled" role="list">
+                          {% for subsub in sublink.links %}
+                            <li>
+                              <a href="{{ subsub.url }}" class="mega-menu__link mega-menu__link--level-4 link{% if subsub.current %} mega-menu__link--active{% endif %}">
+                                {{ subsub.title | escape }}
+                              </a>
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      {% endif %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+
+        {% if block.settings.show_promotion_1 and block.settings.promotion_image_1 != blank %}
+          <div class="mega-menu__promotion">
+            <a href="{{ block.settings.promotion_link_1 }}">
+              <img
+                src="{{ block.settings.promotion_image_1 | image_url: width: 600 }}"
+                srcset="
+                  {{ block.settings.promotion_image_1 | image_url: width: 300 }} 300w,
+                  {{ block.settings.promotion_image_1 | image_url: width: 600 }} 600w,
+                  {{ block.settings.promotion_image_1 | image_url: width: 900 }} 900w
+                "
+                sizes="(max-width: 600px) 100vw, 600px"
+                alt="{{ block.settings.promotion_image_1.alt | escape }}"
+                loading="lazy"
+                width="600"
+                height="400"
+              >
+            </a>
+            <div class="rte">{{ block.settings.promotion_content_1 }}</div>
+          </div>
+        {% endif %}
+
+        {% if block.settings.show_promotion_2 and block.settings.promotion_image_2 != blank %}
+          <div class="mega-menu__promotion">
+            <a href="{{ block.settings.promotion_link_2 }}">
+              <img
+                src="{{ block.settings.promotion_image_2 | image_url: width: 600 }}"
+                srcset="
+                  {{ block.settings.promotion_image_2 | image_url: width: 300 }} 300w,
+                  {{ block.settings.promotion_image_2 | image_url: width: 600 }} 600w,
+                  {{ block.settings.promotion_image_2 | image_url: width: 900 }} 900w
+                "
+                sizes="(max-width: 600px) 100vw, 600px"
+                alt="{{ block.settings.promotion_image_2.alt | escape }}"
+                loading="lazy"
+                width="600"
+                height="400"
+              >
+            </a>
+            <div class="rte">{{ block.settings.promotion_content_2 }}</div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </details>
+</li>

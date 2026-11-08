@@ -1,0 +1,11 @@
+node_modules
+.idea
+.vscode
+.github
+.env.local
+scripts
+functions
+package-lock.json
+package.json
+assets/_*.css
+assets/*.pcss

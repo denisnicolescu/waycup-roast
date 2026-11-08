@@ -1,0 +1,54 @@
+{% comment %}
+  Drawer version of "Collection Product Menu"
+  Renders a product grid from a selected collection inside the drawer.
+
+  Uses:
+  - block.settings.menu_title
+  - block.settings.collection
+  - block.settings.product_limit
+{% endcomment %}
+
+{% assign collection_handle = block.settings.collection | handle %}
+{% assign collection = collections[collection_handle] %}
+
+{% if collection and collection.products_count > 0 %}
+  <li {{ block.shopify_attributes }}>
+    <details id="DrawerDetails-{{ block.id }}">
+      <summary
+        class="menu-drawer__menu-item list-menu__item link link--text focus-inset"
+        id="DrawerSummary-{{ block.id }}"
+      >
+        {{ block.settings.menu_title | escape }}
+        <span class="svg-wrapper">{{ 'icon-arrow.svg' | inline_asset_content }}</span>
+        <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
+      </summary>
+
+      <div class="menu-drawer__submenu has-submenu gradient motion-reduce" tabindex="-1">
+        <div class="menu-drawer__inner-submenu">
+          <button class="menu-drawer__close-button link link--text focus-inset" aria-expanded="true">
+            <span class="svg-wrapper">{{ 'icon-arrow.svg' | inline_asset_content }}</span>
+            {{ block.settings.menu_title | escape }}
+          </button>
+
+          <ul class="menu-drawer__products menu-drawer__menu-item grid grid--2-col" role="list">
+            {% for product in collection.products limit: block.settings.product_limit %}
+              <li class="menu-drawer__product grid__item">
+                <a href="{{ product.url }}" class="menu-drawer__product-link mega-menu__link">
+                  {% if product.featured_image %}
+                    {{ product.featured_image | image_url: width: 480 | image_tag:
+                      widths: '200,300,480',
+                      sizes: '50vw',
+                      alt: product.title,
+                      class: 'menu-drawer__product-image'
+                    }}
+                  {% endif %}
+                  <span class="menu-drawer__product-title">{{ product.title }}</span>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </details>
+  </li>
+{% endif %}

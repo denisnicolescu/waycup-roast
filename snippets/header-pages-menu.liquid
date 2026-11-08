@@ -1,0 +1,53 @@
+{% comment %}
+  Renders a Pages grid inside the header menu.
+
+  Uses:
+  - block.settings.menu_title (fallbacks to menu.title)
+  - block.settings.menu (link_list)
+  - block.settings.page_limit
+  - block.settings.show_titles
+  - block.settings.show_excerpts
+  - Page image metafield: page.metafields.custom.thumbnail
+{% endcomment %}
+
+<li {{ block.shopify_attributes }}>
+  <details class="mega-menu">
+    <summary class="header__menu-item list-menu__item link focus-inset">
+      <span>{{ block.settings.menu_title | escape }}</span>
+      {{ 'icon-caret.svg' | inline_asset_content }}
+    </summary>
+
+    <div class="mega-menu__content color-{{ section.settings.menu_color_scheme }} gradient">
+      <div class="page-width mega-menu__inner">
+        {% assign menu = linklists[block.settings.menu] %}
+        {% if menu and menu.links.size > 0 %}
+          <ul class="mega-menu__pages grid grid--{{ block.settings.columns }}-col-desktop" role="list">
+            {% for link in menu.links limit: block.settings.page_limit %}
+              {% if link.type == 'page_link' and link.object %}
+                {% assign page_image = link.object.metafields.custom.thumbnail %}
+                <li class="mega-menu__page grid__item">
+                  <a href="{{ link.url }}" class="mega-menu__page-link">
+                    {% if page_image != blank %}
+                      {{ page_image | image_url: width: 600 | image_tag:
+                        widths: '200,400,600,800',
+                        sizes: '(min-width: 750px) 400px, 50vw',
+                        alt: link.title,
+                        class: 'mega-menu__page-image'
+                      }}
+                    {% endif %}
+                    {% if block.settings.show_titles %}
+                      <span class="mega-menu__page-title mega-menu__link">{{ link.title }}</span>
+                    {% endif %}
+                    {% if block.settings.show_excerpts and link.object.excerpt != blank %}
+                      <span class="mega-menu__page-excerpt">{{ link.object.excerpt | strip_html | truncate: 80 }}</span>
+                    {% endif %}
+                  </a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    </div>
+  </details>
+</li>

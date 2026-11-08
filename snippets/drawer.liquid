@@ -1,0 +1,38 @@
+{% comment %}
+  Renders the passed content in a drawer.
+
+  Accepts:
+  - name: {String} Header text for the drawer.
+  - content: {String} The content to display in the drawer.
+  - footer: {Boolean} Whether to show the footer in the drawer.
+
+  Usage:
+  {% render 'drawer' name: name, content: content, footer: footer %}
+{% endcomment %}
+<div class="drawer animate section-renderer">
+    <div class="cart-drawer__overlay" onclick="SectionRenderer.hide()"></div>
+    <div
+        class="drawer__inner gradient color-{{ settings.cart_color_scheme }}"
+        role="dialog"
+        aria-modal="true"
+        aria-label="{{ name }}"
+        tabindex="-1">
+        <div class="drawer__header">
+            <h2 class="drawer__heading">{{ name }}</h2>
+            <button
+                    class="drawer__close"
+                    type="button"
+                    onclick="SectionRenderer.hide()"
+                    aria-label="{{ 'accessibility.close' | t }}"
+            >
+                <span class="svg-wrapper">
+                    {{- 'icon-close.svg' | inline_asset_content -}}
+                </span>
+            </button>
+        </div>
+        {{ content }}
+        <div class="drawer__footer">
+            {{ footer }}
+        </div>
+    </div>
+</div>

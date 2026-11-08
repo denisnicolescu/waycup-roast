@@ -1,0 +1,56 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-404",
+      "settings": {}
+    },
+    "1773250021faaf9bb4": {
+      "type": "apps",
+      "blocks": {
+        "lost_found_not_found_resolver_hP4Xaw": {
+          "type": "shopify://apps/lost-found/blocks/not_found_resolver/09e8e683-838b-45f0-94e7-fd87d3f40c27",
+          "settings": {
+            "lost_and_found_recommendations_enabled": true,
+            "lost_and_found_recommendations_min_score": 45,
+            "lost_and_found_show_products": true,
+            "product_show_images": true,
+            "lost_and_found_show_collections": true,
+            "collection_show_images": true,
+            "lost_and_found_show_pages": true,
+            "page_show_images": true,
+            "lost_and_found_show_blogs": true,
+            "blog_show_images": true,
+            "lost_and_found_show_files": false,
+            "lost_and_found_heading_text": "You might be looking for",
+            "lost_and_found_subheading_text": "AI-POWERED SUGGESTIONS",
+            "lost_and_found_title_font_size": 24,
+            "lost_and_found_title_color": "#333333",
+            "lost_and_found_text_color": "#666666",
+            "lost_and_found_accent_color": "#008060",
+            "lost_and_found_show_match_score": true,
+            "lost_and_found_show_type_badge": true
+          }
+        }
+      },
+      "block_order": [
+        "lost_found_not_found_resolver_hP4Xaw"
+      ],
+      "settings": {
+        "include_margins": true
+      }
+    }
+  },
+  "order": [
+    "main",
+    "1773250021faaf9bb4"
+  ]
+}

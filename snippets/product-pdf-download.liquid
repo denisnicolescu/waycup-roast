@@ -1,0 +1,56 @@
+{% comment %}
+  Snippet: product-pdf-download.liquid
+  Usage:
+    {% render 'product-pdf-download', product: product, block: block, section: section %}
+  Works with:
+    - block (from product section)
+    - section (standalone section)
+{% endcomment %}
+
+{% assign defer_css = 'product-pdf-download.css' | asset_url %}
+{% render 'defer-css', url: defer_css %}
+
+{% assign pdf_data = product.metafields.pdf.download.value %}
+
+{% if pdf_data and pdf_data.file %}
+  {%- liquid
+    assign wrapper_id = block.id | default: section.id
+    assign heading = block.settings.heading | default: section.settings.heading
+    assign heading_tag = block.settings.heading_tag | default: section.settings.heading_tag
+    assign show_icon = block.settings.show_icon | default: section.settings.show_icon
+    assign svg_icon = block.settings.svg_icon | default: section.settings.svg_icon
+  -%}
+
+  <div id="pdf-download-{{ wrapper_id }}" class="pdf-download-wrapper">
+
+    {%- assign tag_class = '' -%}
+    {%- case heading_tag -%}
+      {%- when 'p' -%}
+        {%- assign tag_class = 'para' -%}
+      {%- when 'div' -%}
+        {%- assign tag_class = '' -%}
+      {%- else -%}
+        {%- assign tag_class = heading_tag -%}
+    {%- endcase -%}
+
+    {% if heading != blank %}
+      <div class="pdf-download-heading {{ tag_class }}">
+        {{ heading }}
+      </div>
+    {% endif %}
+
+    {% assign pdf_url = pdf_data.file | file_url %}
+    <a href="{{ pdf_url }}"
+       class="pdf-download"
+       download="{{ pdf_data.label | default: shop.name | append: ' PDF' }}.pdf">
+
+      {% if show_icon and svg_icon != blank %}
+        <span class="svg-wrapper">
+            {{ svg_icon }}
+        </span>
+      {% endif %}
+
+      {{ pdf_data.label | default: shop.name | append: ' PDF' }}
+    </a>
+  </div>
+{% endif %}

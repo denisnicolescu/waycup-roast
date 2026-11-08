@@ -1,0 +1,143 @@
+
+{%- liquid
+    if cart != empty and settings.cart_progress_bar_enable
+        assign cart_total = cart.total_price
+        assign thresholds = ''
+        assign messages = ''
+        assign reached_messages = ''
+        assign labels = ''
+        assign icons = ''
+        assign goal_positions = ''
+
+        assign previous_threshold = 0
+        assign preload_images = ''
+        assign goals = localization.market.metafields.cart.progress_bar.value
+        for goal in goals
+            assign threshold = goal.threshold | times: 100 | round
+
+            if threshold > previous_threshold
+                assign previous_threshold = threshold
+                assign message = goal.message | metafield_tag
+                assign reached_message = goal.goal_reached_message | metafield_tag
+                assign label = goal.label
+                assign icon = goal.svg
+
+                assign thresholds = thresholds | append: ',' | append: threshold
+                assign messages = messages | append: '||' | append: message
+                assign reached_messages = reached_messages | append: '||' | append: reached_message
+                assign labels = labels | append: '||' | append: label
+                assign icons = icons | append: '||' | append: icon
+            endif
+        endfor
+
+        assign thresholds = thresholds | split: ','
+        assign messages = messages | split: '||'
+        assign reached_messages = reached_messages | split: '||'
+        assign labels = labels | split: '||'
+        assign icons = icons | split: '||'
+        assign total_threshold_cents = thresholds.last | plus: 0
+        assign progress_fraction = cart_total | times: 100 | divided_by: total_threshold_cents
+
+        if progress_fraction > 100
+            assign progress_percentage = 100
+        else
+            assign progress_percentage = progress_fraction
+        endif
+
+        for threshold in thresholds
+            assign goal_position = threshold | times: 100 | divided_by: total_threshold_cents
+            if goal_positions != ''
+                assign goal_positions = goal_positions | append: ','
+            endif
+            assign goal_positions = goal_positions | append: goal_position
+        endfor
+        assign goal_positions = goal_positions | split: ','
+
+        assign thresholds_size = thresholds.size | minus: 1
+        assign next_goal_index = -1
+        for index in (0..thresholds_size)
+            assign threshold = thresholds[index] | plus: 0
+            assign cart_total_diff = cart_total | minus: threshold
+            if cart_total_diff < 0
+                assign next_goal_index = index
+                break
+            endif
+        endfor
+
+        if next_goal_index == -1
+            assign message = post_goal_messages.last
+        else
+            assign pre_goal_message_template = messages[next_goal_index]
+            assign threshold = thresholds[next_goal_index] | plus: 0
+            assign remaining_for_goal = threshold | minus: cart_total
+            if remaining_for_goal < 0
+                assign remaining_for_goal = 0
+            endif
+
+            if settings.currency_code_enabled
+                assign remaining_for_goal_formatted = remaining_for_goal | money_with_currency
+            else
+                assign remaining_for_goal_formatted = remaining_for_goal | money
+            endif
+            assign message = pre_goal_message_template | replace: '[remaining_for_goal]', remaining_for_goal_formatted
+        endif
+    endif
+-%}
+{%- if cart != empty and settings.cart_progress_bar_enable -%}
+    {%- if template == 'cart' -%}
+        <script src="{{ 'cart-progress-bar.min.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
+    <div class="cart-progress cart-progress--section page-width">
+
+        {%- if settings.cart_progress_bar_display_message -%}
+            <div class="cart-progress__message">
+                {{ message }}
+            </div>
+        {%- endif -%}
+
+        <div class="cart-progress__wrapper">
+            <div class="cart-progress__bar-container">
+                <div class="cart-progress__bar" style="max-width: {{ progress_percentage }}% !important;"></div>
+            </div>
+
+            <div class="cart-progress__goals">
+                {% assign goal_positions_size = goal_positions.size | minus: 1 %}
+                {% for index in (1..goal_positions_size) %}
+                    {% assign goal_position = goal_positions[index] %}
+                    {% assign threshold = thresholds[index] | plus: 0 %}
+                    {% assign cart_total_diff = cart_total | minus: threshold %}
+                    {%- assign diff = cart_total_diff | abs -%}
+                    {%- assign diff_formatted = diff | money_with_currency -%}
+                    {% assign image_icon = icons[index] %}
+
+                    <div
+                            class="cart-progress__goal{% if cart_total_diff >= 0 %} reached{% endif %}"
+                            style="left: {{ goal_position }}%;"
+                            tabindex="0"
+                            aria-label="{% if cart_total_diff >= 0 %}{{ reached_messages[index] | strip_html }}{% else %}{{ messages[index] | strip_html | replace: '[remaining_for_goal]', diff_formatted }}{% endif %}">
+
+                        <div class="cart-progress__goal-threshold">{{ threshold | money_with_currency }}</div>
+                        <div class="cart-progress__goal-icon{% if cart_total_diff >= 0 %} reached{% endif %}" style="max-height: 40px; max-width: 40px; overflow: hidden;">
+                            {{ image_icon }}
+                        </div>
+                        <div class="cart-progress__goal-label">{{ labels[index] }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% style %}
+        .cart-progress {
+            --progress-bar-color: {{ settings.cart_progress_bar_color_bar }};
+            --progress-bar-color-empty: {{ settings.cart_progress_bar_color_bar_empty }};
+        }
+    {% endstyle %}
+    {% if template == 'cart' %}
+        {% assign preload = true %}
+    {% else %}
+        {% assign preload = false %}
+    {% endif %}
+        {{ 'cart-progress-bar.css' | asset_url | stylesheet_tag: preload: preload }}
+{% endif %}
+

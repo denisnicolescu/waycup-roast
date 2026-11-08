@@ -1,0 +1,199 @@
+<section>
+  <h2>Forms</h2>
+  <form>
+    <div class="forms">
+      <div class="field">
+        <input
+            id="inputid"
+            type="text"
+            class="field__input"
+            placeholder="Name"
+        >
+        <label class="field__label" for="inputid">Input</label>
+      </div>
+      <div>Required</div>
+      <div>Disabled</div>
+      {%- capture input -%}
+        {% raw %}
+&lt;div class=&quot;field&quot;&gt;
+  &lt;input
+    id=&quot;inputid&quot;
+    type=&quot;text&quot;
+    class=&quot;field__input&quot;
+    placeholder=&quot;Name&quot;
+  &gt;
+  &lt;label class=&quot;field__label&quot; for=&quot;inputid&quot;&gt;Input&lt;/label&gt;
+&lt;/div&gt;
+        {% endraw %}
+      {%- endcapture -%}
+      <div>
+        <pre><code>{{ input | strip }}</code></pre>
+      </div>
+    </div>
+
+    <div class="forms">
+      <div class="field">
+          <textarea
+                  rows="10"
+                  id="textarea"
+                  class="text-area field__input"
+                  name="Textarea"
+                  placeholder="Textarea"
+          >
+            {{- form.body -}}
+          </textarea>
+        <label class="form__label field__label" for="textarea">
+          Textarea
+        </label>
+      </div>
+      <div>Required</div>
+      <div>Disabled</div>
+
+      {%- capture textarea -%}
+        {% raw %}
+&lt;textarea
+  rows=&quot;10&quot;
+  id=&quot;textarea&quot;
+  class=&quot;text-area field__input&quot;
+  name=&quot;Textarea&quot;
+  placeholder=&quot;Textarea&quot;
+  &gt;
+    {{- form.body -}}
+&lt;/textarea&gt;
+        {% endraw %}
+      {%- endcapture -%}
+      <div>
+        <pre><code>{{ textarea | strip }}</code></pre>
+      </div>
+    </div>
+
+
+    <div class="forms">
+      <div>
+        <label for="selectid">Select</label>
+        <div class="select">
+          <select
+            id="selectid"
+            class="select__select"
+          >
+            <option
+              value="1"
+            >
+              Lorem ipsum
+            </option>
+            <option
+              value="2"
+            >
+              Dolor
+            </option>
+          </select>
+          <span class="svg-wrapper">
+            {{- 'icon-caret.svg' | inline_asset_content -}}
+          </span>
+        </div>
+      </div>
+      <div>Required</div>
+      <div>Disabled</div>
+
+      {%- capture select -%}
+        {% raw %}
+          &lt;textarea
+          rows=&quot;10&quot;
+          id=&quot;textarea&quot;
+          class=&quot;text-area field__input&quot;
+          name=&quot;Textarea&quot;
+          placeholder=&quot;Textarea&quot;
+          &gt;
+          {{- form.body -}}
+          &lt;/textarea&gt;
+        {% endraw %}
+      {%- endcapture -%}
+      <div>
+        <pre><code>{{ select | strip }}</code></pre>
+      </div>
+    </div>
+
+    <div class="forms">
+      <div class="field">
+        <label for="checkbox" class="checkbox__label">
+          <input
+                  type="checkbox"
+                  name="Name"
+                  value="1"
+                  id="checkbox"
+                    checked
+          >
+          {{ 'square.svg' | inline_asset_content }}
+          {{- 'icon-checkmark.svg' | inline_asset_content -}}
+          Value
+        </label>
+      </div>
+      <div>Required</div>
+      <div>Disabled</div>
+      {%- capture input -%}
+        {% raw %}
+&lt;label for=&quot;checkbox&quot; class=&quot;checkbox__label&quot;&gt;
+    &lt;input
+        type=&quot;checkbox&quot;
+        name=&quot;Name&quot;
+        value=&quot;1&quot;
+        id=&quot;checkbox&quot;
+        checked
+    &gt;
+    {{ 'square.svg' | inline_asset_content }}
+    {{- 'icon-checkmark.svg' | inline_asset_content -}}
+    Value
+&lt;/label&gt;
+        {% endraw %}
+      {%- endcapture -%}
+      <div>
+        <pre><code>{{ input | strip }}</code></pre>
+      </div>
+    </div>
+    <div class="forms">
+      <div class="field">
+          <input
+              type="radio"
+              id="radio"
+              name="name"
+              value="value"
+              form="form"
+              checked
+          >
+          <label for="radio">
+              Value
+          </label>
+          <input
+              type="radio"
+              id="radio2"
+              name="name"
+              value="value2"
+              form="form"
+          >
+          <label for="radio2">
+              Value 2
+          </label>
+      </div>
+      <div>Required</div>
+      <div>Disabled</div>
+      {%- capture radio -%}
+        {% raw %}
+&lt;input
+    type=&quot;radio&quot;
+    id=&quot;radio&quot;
+    name=&quot;name&quot;
+    value=&quot;value&quot;
+    form=&quot;form&quot;
+    checked
+&gt;
+&lt;label for=&quot;radio&quot;&gt;
+    Value
+&lt;/label&gt;
+        {% endraw %}
+      {%- endcapture -%}
+      <div>
+        <pre><code>{{ radio | strip }}</code></pre>
+      </div>
+    </div>
+  </form>
+</section>

@@ -1,0 +1,9 @@
+{% capture drawer_content %}
+    {% assign dimension = product.metafields.custom.dimensions.value %}
+    <p>Width: {{ dimension.width.value }}{{ dimension.width.unit }}</p>
+    <p>Height: {{ dimension.height.value }}{{ dimension.height.unit }}</p>
+    <p>Depth: {{ dimension.depth.value }}{{ dimension.depth.unit }}</p>
+    <a href="#">test link</a>
+{% endcapture %}
+
+{% render 'drawer', name: 'Dimensions', content: drawer_content %}

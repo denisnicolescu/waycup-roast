@@ -1,0 +1,72 @@
+{% assign ui = '
+    account,
+    arrow,
+    caret,
+    cart,
+    cart-empty,
+    check-mark,
+    checkmark,
+    close-small,
+    close,
+    filter,
+    hamburger,
+    heart,
+    info,
+    map-pin,
+    minus,
+    plus,
+    search,
+    silhouette,
+    star,
+    truck,
+'
+  | split: ','
+%}
+
+{% assign social = '
+    facebook,
+    instagram,
+    linkedin,
+    pinterest,
+    twitter,
+    youtube
+'
+  | strip
+  | split: ','
+%}
+
+<section>
+  <h2>Icons</h2>
+
+  <pre><code>{% raw %}{{ 'icon-user.svg' | inline_asset_content }}{% endraw %}</code></pre>
+
+  <ul class="icons">
+    <li class="heading">
+      <h3>General</h3>
+    </li>
+
+    {% for icon in ui %}
+      {% assign name = icon | strip %}
+      {% assign file_name = 'icon-' | append: name | append: '.svg' %}
+
+      <li class="icon">
+        <div>{{ file_name | inline_asset_content }}</div>
+        <p>{{ name }}</p>
+      </li>
+    {% endfor %}
+
+    <li class="heading">
+      <h3>Social</h3>
+    </li>
+
+    {% for icon in social %}
+      {% assign name = icon | strip %}
+      {% assign file_name = 'icon-' | append: name | append: '.svg' %}
+
+      <li class="icon">
+        <div>{{ file_name | inline_asset_content }}</div>
+        <p>{{ name }}</p>
+      </li>
+    {% endfor %}
+  </ul>
+</section>

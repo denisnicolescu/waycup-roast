@@ -1,0 +1,214 @@
+{%- liquid
+  assign recommendations_limit = settings.cart_drawer_recommendations_limit | default: 4
+  assign rendered_recommendations_count = 0
+-%}
+
+{%- capture recommendation_cards -%}
+  {%- if settings.cart_drawer_recommendations_enabled and recommendations.performed? -%}
+    {%- for recommendation in recommendations.products -%}
+      {%- if rendered_recommendations_count >= recommendations_limit -%}
+        {%- break -%}
+      {%- endif -%}
+
+      {%- liquid
+        assign recommendation_is_in_cart = false
+        assign recommendation_variant = recommendation.selected_or_first_available_variant
+
+        for cart_item in cart.items
+          if cart_item.product.id == recommendation.id
+            assign recommendation_is_in_cart = true
+            break
+          endif
+        endfor
+      -%}
+
+      {%- if recommendation.available and recommendation_is_in_cart == false -%}
+        <div class="cart-drawer__recommendation">
+          <a
+            href="{{ recommendation.url }}"
+            class="cart-drawer__recommendation-link"
+            aria-label="{{ recommendation.title | escape }}"
+          >
+            <div class="cart-drawer__recommendation-media">
+              {%- if recommendation.featured_media -%}
+                {{
+                  recommendation.featured_media
+                  | image_url: width: 500
+                  | image_tag:
+                    class: 'cart-drawer__recommendation-image',
+                    loading: 'lazy',
+                    widths: '120, 180, 240, 320, 500',
+                    sizes: '(min-width: 990px) 18vw, 42vw',
+                    alt: recommendation.featured_media.alt
+                }}
+              {%- endif -%}
+              <h3 class="cart-drawer__recommendation-title link">
+                {{ recommendation.title | escape }}
+              </h3>
+            </div>
+
+            
+          </a>
+
+          <div class="cart-drawer__recommendation-content">
+              <div class="cart-drawer__recommendation-price">
+                {%- if recommendation.compare_at_price > recommendation.price -%}
+                  <s class="cart-drawer__recommendation-price--compare">
+                    {{ recommendation.compare_at_price | money }}
+                  </s>
+                {%- endif -%}
+
+                <span class="cart-drawer__recommendation-price--current">
+                  {%- if recommendation.price_varies -%}
+                    {{ 'products.product.price.from_price_html' | t: price: recommendation.price | money }}
+                  {%- else -%}
+                    {{ recommendation.price | money }}
+                  {%- endif -%}
+                </span>
+              </div>
+            </div>
+
+          {%- if settings.cart_drawer_recommendations_show_atc -%}
+            <div class="cart-drawer__recommendation-actions">
+              {%- if recommendation.has_only_default_variant -%}
+                <button
+                  type="button"
+                  class="button button--secondary cart-drawer__recommendation-add"
+                  data-cart-drawer-recommendation-add
+                  data-product-id="{{ recommendation.id }}"
+                  data-variant-id="{{ recommendation_variant.id }}"
+                  data-product-title="{{ recommendation.title | escape }}"
+                >
+                  <span data-cart-drawer-recommendation-add-label>
+                    {{ 'products.product.add_to_cart' | t }}
+                  </span>
+
+                  <span
+                    class="loading__spinner hidden"
+                    data-cart-drawer-recommendation-add-spinner
+                  >
+                    <svg
+                      aria-hidden="true"
+                      focusable="false"
+                      class="spinner"
+                      viewBox="0 0 66 66"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle
+                        class="path"
+                        fill="none"
+                        stroke-width="6"
+                        cx="33"
+                        cy="33"
+                        r="30"
+                      ></circle>
+                    </svg>
+                  </span>
+                </button>
+              {%- else -%}
+                <button
+                  type="button"
+                  class="button button--secondary cart-drawer__recommendation-options"
+                  data-cart-drawer-recommendation-options
+                  data-product-id="{{ recommendation.id }}"
+                  aria-haspopup="dialog"
+                  aria-controls="CartDrawer-RecommendationModal"
+                >
+                  {{ 'products.product.choose_options' | t }}
+                </button>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+          {%- if settings.cart_drawer_recommendations_show_atc and recommendation.has_only_default_variant == false -%}
+            <script
+              type="application/json"
+              data-cart-drawer-recommendation-product="{{ recommendation.id }}"
+            >
+              {
+                "title": {{ recommendation.title | json }},
+                "variants": [
+                  {%- for variant in recommendation.variants -%}
+                    {
+                      "id": {{ variant.id | append: '' | json }},
+                      "title": {{ variant.title | json }},
+                      "available": {{ variant.available | json }},
+                      "price": {{ variant.price | money | json }},
+                      "compareAtPrice":
+                        {%- if variant.compare_at_price > variant.price -%}
+                          {{ variant.compare_at_price | money | json }}
+                        {%- else -%}
+                          null
+                        {%- endif -%}
+                    }{% unless forloop.last %},{% endunless %}
+                  {%- endfor -%}
+                ]
+              }
+            </script>
+          {%- endif -%}
+        </div>
+
+        {%- assign rendered_recommendations_count = rendered_recommendations_count | plus: 1 -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- if rendered_recommendations_count > 0 -%}
+  <section
+    id="CartDrawer-Recommendations-Content"
+    class="cart-drawer__recommendations-content"
+    aria-labelledby="CartDrawer-Recommendations-Heading"
+  >
+    {%- if settings.cart_drawer_recommendations_title != blank -%}
+      <h2
+        id="CartDrawer-Recommendations-Heading"
+        class="cart-drawer__recommendations-heading"
+      >
+        {{ settings.cart_drawer_recommendations_title | escape }}
+      </h2>
+    {%- endif -%}
+
+    <div class="cart-drawer__recommendations-grid">
+      {{ recommendation_cards }}
+    </div>
+
+    {%- if settings.cart_drawer_recommendations_show_atc -%}
+      <dialog
+        id="CartDrawer-RecommendationModal"
+        class="cart-drawer__recommendation-modal"
+        data-cart-drawer-recommendation-modal
+        aria-labelledby="CartDrawer-RecommendationModal-Title"
+        data-add-to-cart-label="{{ 'products.product.add_to_cart' | t | escape }}"
+        data-options-label="{{ 'products.product.choose_options' | t | escape }}"
+        data-sold-out-label="{{ 'products.product.sold_out' | t | escape }}"
+        data-loading-label="{{ 'accessibility.loading' | t | escape }}"
+      >
+        <div class="cart-drawer__recommendation-modal-inner">
+          <button
+            type="button"
+            class="button button--tertiary cart-drawer__recommendation-modal-close"
+            data-cart-drawer-recommendation-modal-close
+            aria-label="{{ 'accessibility.close' | t }}"
+          >
+            <span class="svg-wrapper">
+              {{- 'icon-close.svg' | inline_asset_content -}}
+            </span>
+          </button>
+
+          <div
+            class="cart-drawer__recommendation-modal-content"
+            data-cart-drawer-recommendation-modal-content
+          ></div>
+        </div>
+      </dialog>
+    {%- endif -%}
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Cart recommendations",
+  "settings": []
+}
+{% endschema %}

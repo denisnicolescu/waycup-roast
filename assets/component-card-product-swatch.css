@@ -1,0 +1,49 @@
+card-product-swatch {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0;
+    &.expanded:not([data-display="horizontal_scroll"]) {
+        flex-wrap: wrap;
+    }
+    &[data-display="horizontal_scroll"] {
+        overflow: auto;
+    }
+    &[data-alignment="center"]:not([data-display="horizontal_scroll"]) {
+        justify-content: center;
+    }
+    &[data-display="all"] {
+        flex-wrap: wrap;
+    }
+
+    .swatch-wrapper {
+        display: inline-block;
+    }
+
+    &.has-toggle:not(.expanded) .swatch-hidden {
+        display: none !important;
+    }
+
+    .swatch-wrapper input {
+        clip: rect(0, 0, 0, 0);
+        overflow: hidden;
+        position: absolute;
+        height: 1px;
+        width: 1px;
+    }
+
+    .swatch-toggle {
+        display: inline-block;
+        margin-left: 0.5rem;
+        padding: 0.25em 0.5em;
+        background: #eee;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        border: none;
+    }
+
+    .swatch-wrapper label {
+        width: var(--product-card-swatch-size);
+        margin: .7rem 0.6em .2rem 0.6rem;
+    }
+}

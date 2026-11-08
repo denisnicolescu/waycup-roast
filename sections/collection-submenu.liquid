@@ -1,0 +1,215 @@
+{{ 'collection-submenu.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign collection_menu = section.settings.menu
+  assign max_rows = section.settings.max_rows
+  assign show_view_all = section.settings.show_view_all
+  assign show_collection_image = section.settings.show_collection_image
+  assign current_collection_url = collection.url
+-%}
+
+{% capture submenu_content %}
+  {% if collection_menu.links %}
+    {%- assign has_first_lvl_match = false -%}
+    {%- for link in collection_menu.links -%}
+      {%- if link.url == current_collection_url -%}
+        {%- assign has_first_lvl_match = true -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {% for link in collection_menu.links %}
+      {% assign is_active_first_lvl = false %}
+      {% assign is_active_second_lvl = false %}
+      {% assign is_active_third_lvl = false %}
+      {% assign active_second_lvl_link = "" %}
+      {% assign active_second_lvl_title = "" %}
+      {% assign active_third_lvl_links = "" | split: "," %}
+
+      {% if link.url == current_collection_url %}
+        {% assign is_active_first_lvl = true %}
+      {% endif %}
+
+      {% for sub_link in link.links %}
+        {% if sub_link.url == current_collection_url %}
+          {% assign is_active_second_lvl = true %}
+          {% assign active_second_lvl_link = link.url %}
+          {% assign active_second_lvl_title = link.title %}
+          {% assign active_second_lvl_nav_link = link %}
+          {% assign active_third_lvl_links = sub_link.links %}
+        {% endif %}
+
+        {% for grandchild_link in sub_link.links %}
+          {% if grandchild_link.url == current_collection_url %}
+            {% assign is_active_third_lvl = true %}
+            {% assign active_second_lvl_link = sub_link.url %}
+            {% assign active_second_lvl_title = sub_link.title %}
+            {% assign active_second_lvl_nav_link = sub_link %}
+            {% assign active_third_lvl_links = sub_link.links %}
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+
+      {%- liquid
+        assign show_nav = false
+        assign active_level = 0
+        assign show_view_all_link = false
+        if is_active_first_lvl
+          assign show_nav = true
+          assign active_level = 1
+        endif
+        if is_active_third_lvl
+          assign show_nav = true
+          assign active_level = 3
+          assign show_view_all_link = true
+        endif
+        if is_active_second_lvl and active_third_lvl_links != empty
+          assign show_nav = true
+          assign active_level = 2
+          assign show_view_all_link = true
+        endif
+        if is_active_second_lvl and active_third_lvl_links == empty and has_first_lvl_match == false
+          assign show_nav = true
+          assign active_level = 2
+          assign show_view_all_link = true
+        endif
+        if active_second_lvl_link == blank or active_second_lvl_link == '/' or active_second_lvl_link == '#'
+          assign show_view_all_link = false
+        endif
+      -%}
+      {% if show_nav %}
+        <nav class="collection-submenu collection-submenu--level-{{ active_level }}" data-active-level="{{ active_level }}" role="navigation">
+          <submenu-layout>
+            <div 
+              class="submenu-list submenu-list--{{ section.settings.item_style }} visibly-hidden"
+              data-max-rows="{{ max_rows }}" 
+              style="--submenu-item-border-radius: {{ section.settings.border_radius }}px; --submenu-item-bg-color: {{ section.settings.color_scheme.settings.background }}; --submenu-item-text-color: {{ section.settings.color_scheme.settings.text }}; --submenu-item-padding: {{ section.settings.padding }}px; --max-rows: {{ section.settings.max_rows }}; --row-height: calc(37px + var(--submenu-item-padding) * 2);">
+              
+              {% if show_view_all and show_view_all_link %}
+                <div class="submenu-item view-all">
+                  <a href="{{ active_second_lvl_link }}" class="submenu-link">
+                    {% if show_collection_image and active_second_lvl_nav_link.type == 'collection_link' and active_second_lvl_nav_link.object.image %}
+                      {{ active_second_lvl_nav_link.object.image | image_url: width: 50 | image_tag: class: 'submenu-item__image', loading: 'lazy' }}
+                    {% endif %}
+                    {% if active_second_lvl_title != blank %}{{ 'sections.collection_submenu.view_all_title' | t: title: active_second_lvl_title }}{% else %}{{ 'sections.collection_submenu.view_all' | t }}{% endif %}
+                  </a>
+                </div>
+              {% endif %}
+
+              {% if is_active_first_lvl or active_third_lvl_links == empty %}
+                {% for sub_link in link.links %}
+                  <div class="submenu-item{% if sub_link.url == current_collection_url %} active{% endif %}">
+                    <a href="{{ sub_link.url }}" class="submenu-link">
+                      {% if show_collection_image and sub_link.type == 'collection_link' and sub_link.object.image %}
+                        {{ sub_link.object.image | image_url: width: 50 | image_tag: class: 'submenu-item__image', loading: 'lazy' }}
+                      {% endif %}
+                      {{ sub_link.title }}
+                    </a>
+                  </div>
+                {% endfor %}
+              {% endif %}
+
+              {% if active_third_lvl_links != empty %}
+                {% for grandchild_link in active_third_lvl_links %}
+                  <div class="submenu-item{% if grandchild_link.url == current_collection_url %} active{% endif %}">
+                    <a href="{{ grandchild_link.url }}" class="submenu-link">
+                      {% if show_collection_image and grandchild_link.type == 'collection_link' and grandchild_link.object.image %}
+                        {{ grandchild_link.object.image | image_url: width: 50 | image_tag: class: 'submenu-item__image', loading: 'lazy' }}
+                      {% endif %}
+                      {{ grandchild_link.title }}
+                    </a>
+                  </div>
+                {% endfor %}
+              {% endif %}
+              
+            </div>
+          </submenu-layout>
+        </nav>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endcapture %}
+
+{% if submenu_content != blank %}
+  <div class="collection-menu-section color-{{ section.settings.color_scheme }}">
+    <div class="collection-menu page-width{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %} {% if collection.description != blank %} collection-menu--has-description{% endif %}">
+      <script src="{{ 'collection-submenu.min.js' | asset_url }}" defer="defer"></script>
+      {{ submenu_content }}
+    </div>
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "t:sections.main-collection-submenu.name",
+  "tag": "section",
+  "class": "section",
+  "enabled_on": {
+    "templates": ["collection"]
+  },
+  "limit": 1,
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "t:sections.main-collection-submenu.settings.menu.label",
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-2"
+    },
+    {
+      "type": "select",
+      "id": "item_style",
+      "label": "Item style",
+      "options": [
+        { "value": "pill", "label": "Pill" },
+        { "value": "link", "label": "Link" }
+      ],
+      "default": "pill"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "t:sections.main-collection-submenu.settings.show_view_all.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "label": "Show collection image",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "max_rows",
+      "label": "t:sections.main-collection-submenu.settings.max_rows.label",
+      "min": 1,
+      "max": 3,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "t:sections.main-collection-submenu.settings.border_radius.label",
+      "min": 0,
+      "max": 50,
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "t:sections.main-collection-submenu.settings.padding.label",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.main-collection-submenu.name"
+    }
+  ]
+}
+{% endschema %}

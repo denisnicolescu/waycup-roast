@@ -1,0 +1,65 @@
+<section>
+  <h2>Buttons</h2>
+
+  <div class="buttons">
+    <button class="button button--primary">&lt;button&gt; Primary</button>
+    <button class="button button--primary" disabled>&lt;button&gt; Primary Disabled</button>
+    <a href="#" class="button button--primary">&lt;a&gt; Primary</a>
+    <button class="button button--secondary">&lt;button&gt; Secondary</button>
+    <button class="button button--secondary" disabled>&lt;button&gt; Secondary Disabled</button>
+    <a href="#" class="button button--secondary">&lt;a&gt; Button Primary</a>
+  </div>
+
+  {%- capture light -%}
+    {% raw %}
+&lt;button class=&quot;button button--primary&quot;&gt;Primary&lt;/button&gt;
+&lt;button class=&quot;button button--primary&quot; disabled&gt;Primary Disabled&lt;/button&gt;
+&lt;a href=&quot;#&quot; class=&quot;button button--primary&quot;&gt;Primary&lt;/a&gt;
+&lt;button class=&quot;button button--secondary&quot;&gt;Secondary&lt;/button&gt;
+&lt;button class=&quot;button button--secondary&quot; disabled&gt;Secondary Disabled&lt;/button&gt;
+&lt;a href=&quot;#&quot; class=&quot;button button--secondary&quot;&gt;Button Primary&lt;/a&gt;
+    {% endraw %}
+  {%- endcapture -%}
+
+  <pre><code>{{ light | strip }}</code></pre>
+
+  <div class="buttons" style="background-color: var(--color-black);">
+    <button class="button button--primary on-dark">&lt;button&gt; Primary</button>
+    <button class="button button--primary on-dark" disabled>&lt;button&gt; Primary Disabled</button>
+    <a href="#" class="button button--primary on-dark">&lt;a&gt; Primary</a>
+    <button class="button button--secondary on-dark">&lt;button&gt; Secondary</button>
+    <button class="button button--secondary on-dark" disabled>&lt;button&gt; Secondary Disabled</button>
+    <a href="#" class="button button--secondary on-dark">&lt;a&gt; Button Primary</a>
+  </div>
+
+  {%- capture dark -%}
+    {% raw %}
+&lt;button class=&quot;button button--primary on-dark&quot;&gt;Primary&lt;/button&gt;
+&lt;button class=&quot;button button--primary on-dark&quot; disabled&gt;Primary Disabled&lt;/button&gt;
+&lt;a href=&quot;#&quot; class=&quot;button button--primary on-dark&quot;&gt;Primary&lt;/a&gt;
+&lt;button class=&quot;button button--secondary on-dark&quot;&gt;Secondary&lt;/button&gt;
+&lt;button class=&quot;button button--secondary on-dark&quot; disabled&gt;Secondary Disabled&lt;/button&gt;
+&lt;a href=&quot;#&quot; class=&quot;button button--secondary on-dark&quot;&gt;Button Primary&lt;/a&gt;
+    {% endraw %}
+  {%- endcapture -%}
+
+  <pre><code>{{ dark | strip }}</code></pre>
+
+  <div class="buttons">
+    <button class="button button--primary button--link">Primary - Link Style</button>
+    <a href="#" class="button button--primary button--link">Primary - Link Style</a>
+    <button class="button button--secondary button--link">Secondary - Link Style</button>
+    <a href="#" class="button button--secondary button--link">Button Primary - Link Style</a>
+  </div>
+
+  {%- capture links -%}
+    {% raw %}
+&lt;button class=&quot;button button--primary button--link&quot;&gt;Primary - Link Style&lt;/button&gt;
+&lt;a href=&quot;#&quot; class=&quot;button button--primary button--link&quot;&gt;Primary - Link Style&lt;/a&gt;
+&lt;button class=&quot;button button--secondary button--link&quot;&gt;Secondary - Link Style&lt;/button&gt;
+&lt;a href=&quot;#&quot; class=&quot;button button--secondary button--link&quot;&gt;Button Primary - Link Style&lt;/a&gt;
+    {% endraw %}
+  {%- endcapture -%}
+
+  <pre><code>{{ links | strip }}</code></pre>
+</section>

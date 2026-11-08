@@ -1,0 +1,355 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "vendor": {
+          "type": "text",
+          "settings": {
+            "text": "{{ product.vendor }}",
+            "text_style": "uppercase"
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "caption": {
+          "type": "text",
+          "settings": {
+            "text": "{{ product.metafields.descriptors.subtitle.value }}",
+            "text_style": "subtitle"
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "button",
+            "swatch_shape": "circle"
+          }
+        },
+        "quantity_selector": {
+          "type": "quantity_selector",
+          "settings": {}
+        },
+        "pdf_download_QqVmcQ": {
+          "type": "pdf_download",
+          "settings": {
+            "heading": "Product PDFs",
+            "heading_tag": "h4",
+            "show_icon": true,
+            "svg_icon": "<svg width=\"800px\" height=\"800px\" viewbox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<g id=\"Interface / Download\">\n<path id=\"Vector\" d=\"M6 21H18M12 3V17M12 17L17 12M12 17L7 12\" stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>\n</g>\n</svg>"
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true,
+            "show_gift_card_recipient": true
+          }
+        },
+        "gpmd_wishlist_wishlist_button_38yg4W": {
+          "type": "shopify://apps/gpmd-wishlist/blocks/wishlist-button/019dfd90-ac82-79a5-8d13-3b77ee0d6f45",
+          "settings": {
+            "button_padding": 10,
+            "full_width": true,
+            "spacing": 0,
+            "show_label": true,
+            "label_add": "",
+            "label_added": "",
+            "font_size": 16,
+            "show_border": false,
+            "border_radius": 6,
+            "icon_size": 24,
+            "active_display": "default",
+            "active_border": "combined",
+            "show_view_link": true,
+            "view_link_position": "below",
+            "view_link_size": 13,
+            "view_link_text": "",
+            "view_link_color": "",
+            "custom_colors": false,
+            "icon_color": "#c46a6a",
+            "background_color": "#ffffff",
+            "text_color": "#202223",
+            "border_color": "#c9cccf",
+            "active_icon_color": "#c46a6a",
+            "active_background_color": "#ffffff",
+            "active_text_color": "#c46a6a",
+            "active_border_color": "#c46a6a",
+            "custom_modal_colors": false,
+            "modal_accent": "#c46a6a",
+            "modal_background": "#ffffff",
+            "modal_text_color": "#111111"
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "collapsible-row-0": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Materials",
+            "icon": "leather",
+            "content": "",
+            "page": ""
+          }
+        },
+        "collapsible-row-1": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Shipping & Returns",
+            "icon": "truck",
+            "content": "<p>Test</p>",
+            "page": ""
+          }
+        },
+        "collapsible-row-2": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Dimensions",
+            "icon": "ruler",
+            "content": "",
+            "page": ""
+          }
+        },
+        "collapsible-row-3": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Care Instructions",
+            "icon": "heart",
+            "content": "",
+            "page": ""
+          }
+        }
+      },
+      "block_order": [
+        "vendor",
+        "title",
+        "caption",
+        "price",
+        "variant_picker",
+        "quantity_selector",
+        "pdf_download_QqVmcQ",
+        "buy_buttons",
+        "gpmd_wishlist_wishlist_button_38yg4W",
+        "description",
+        "collapsible-row-0",
+        "collapsible-row-1",
+        "collapsible-row-2",
+        "collapsible-row-3"
+      ],
+      "settings": {
+        "enable_sticky_info": true,
+        "color_scheme": "",
+        "media_gallery_type": "photoswipe",
+        "gallery_layout_photoswipe": "list",
+        "mobile_thumbnails_photoswipe": "slider-photoswipe",
+        "photoswipe_zoom_levels": "fill",
+        "photoswipe_zoom_transitions": "zoom",
+        "gallery_layout": "thumbnail_slider",
+        "mobile_thumbnails": "hide",
+        "media_size": "medium",
+        "constrain_to_viewport": true,
+        "media_fit": "contain",
+        "media_position": "left",
+        "image_zoom": "none",
+        "hide_variants": true,
+        "enable_video_looping": false,
+        "padding_top": 36,
+        "padding_bottom": 12
+      }
+    },
+    "image-with-text": {
+      "type": "image-with-text",
+      "blocks": {
+        "image-with-text-0": {
+          "type": "heading",
+          "settings": {
+            "heading": "Image with text",
+            "heading_tag": "h2",
+            "heading_size": "h1"
+          }
+        },
+        "image-with-text-1": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
+            "text_style": "body"
+          }
+        }
+      },
+      "block_order": [
+        "image-with-text-0",
+        "image-with-text-1"
+      ],
+      "settings": {
+        "height": "small",
+        "desktop_image_width": "medium",
+        "layout": "text_first",
+        "image_behavior": "none",
+        "content_layout": "no-overlap",
+        "desktop_content_position": "top",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "left",
+        "section_color_scheme": "",
+        "color_scheme": "scheme-2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "multicolumn": {
+      "type": "multicolumn",
+      "blocks": {
+        "column-0": {
+          "type": "column",
+          "settings": {
+            "title": "Free Shipping",
+            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column-1": {
+          "type": "column",
+          "settings": {
+            "title": "Hassle-Free Exchanges",
+            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column-0",
+        "column-1"
+      ],
+      "settings": {
+        "title": "",
+        "heading_tag": "h2",
+        "heading_size": "h1",
+        "image_width": "full",
+        "image_ratio": "adapt",
+        "button_label": "",
+        "button_link": "",
+        "columns_desktop": 2,
+        "column_alignment": "left",
+        "background_style": "none",
+        "color_scheme": "scheme-1",
+        "swipe_on_desktop": false,
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "related-products": {
+      "type": "related-products",
+      "settings": {
+        "heading": "You may also like",
+        "heading_size": "h2",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "columns_mobile": "2",
+        "layout": "scroll",
+        "drag_scroll": true,
+        "display_arrows": true,
+        "color_scheme": "scheme-1",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "padding_top": 36,
+        "padding_bottom": 28
+      }
+    },
+    "17610401115fd4d8ac": {
+      "type": "apps",
+      "settings": {
+        "include_margins": true
+      }
+    },
+    "metafield_list_BEkgwK": {
+      "type": "metafield-list",
+      "blocks": {
+        "metafield_RWzjBP": {
+          "type": "metafield",
+          "settings": {
+            "title": "Empty",
+            "metafield_key": ""
+          }
+        },
+        "metafield_cGLyrd": {
+          "type": "metafield",
+          "settings": {
+            "title": "Incremental",
+            "metafield_key": "extension.incremental_purchase_quantity"
+          }
+        },
+        "metafield_EfLQiE": {
+          "type": "metafield",
+          "settings": {
+            "title": "Material",
+            "metafield_key": "custom.text_test_3"
+          }
+        },
+        "metafield_akgRJw": {
+          "type": "metafield",
+          "settings": {
+            "title": "Date",
+            "metafield_key": "pre_order.date"
+          }
+        },
+        "metafield_w3yR3m": {
+          "type": "metafield",
+          "settings": {
+            "title": "Layers",
+            "metafield_key": "custom.number_of_layers"
+          }
+        }
+      },
+      "block_order": [
+        "metafield_RWzjBP",
+        "metafield_cGLyrd",
+        "metafield_EfLQiE",
+        "metafield_akgRJw",
+        "metafield_w3yR3m"
+      ],
+      "name": "Product metafield list",
+      "settings": {
+        "heading": "Product details",
+        "heading_size": "h1",
+        "columns_desktop": "2",
+        "columns_mobile": "1",
+        "show_dividers": true,
+        "color_scheme": "scheme-2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "main",
+    "image-with-text",
+    "multicolumn",
+    "related-products",
+    "17610401115fd4d8ac",
+    "metafield_list_BEkgwK"
+  ]
+}

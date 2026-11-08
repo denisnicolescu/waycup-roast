@@ -1,0 +1,140 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.header.name",
+  "type": "header",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "announcement-bar-0": {
+          "type": "announcement",
+          "settings": {
+            "text": "Welcome to our store 1",
+            "link": ""
+          }
+        },
+        "announcement_JiADqM": {
+          "type": "announcement",
+          "settings": {
+            "text": "Welcome to our store 2",
+            "link": ""
+          }
+        },
+        "announcement_K8MJG4": {
+          "type": "announcement",
+          "settings": {
+            "text": "Welcome to our store 3",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "announcement-bar-0",
+        "announcement_JiADqM",
+        "announcement_K8MJG4"
+      ],
+      "settings": {
+        "auto_rotate": false,
+        "change_slides_speed": 5,
+        "color_scheme": "",
+        "show_line_separator": true,
+        "show_social": false,
+        "enable_country_selector": false,
+        "enable_language_selector": false
+      }
+    },
+    "header": {
+      "type": "header",
+      "blocks": {
+        "mega_menu_gnx74G": {
+          "type": "mega-menu",
+          "settings": {
+            "menu": "test",
+            "show_promotion_1": true,
+            "promotion_image_1": "shopify://shop_images/04_2048x2048px_MENS_ALL_LANG_03_03_25.jpg",
+            "promotion_link_1": "",
+            "promotion_content_1": "",
+            "show_promotion_2": true,
+            "promotion_image_2": "shopify://shop_images/silhouetted-couples-look-out-at-a-city-at-night.jpg",
+            "promotion_link_2": "",
+            "promotion_content_2": ""
+          }
+        },
+        "collection_products_V3TWyp": {
+          "type": "collection-products",
+          "settings": {
+            "collection": "dress",
+            "product_limit": 4,
+            "menu_title": "Featured Products"
+          }
+        },
+        "pages_menu_Emnpq9": {
+          "type": "pages-menu",
+          "settings": {
+            "menu_title": "Pages",
+            "menu": "pages",
+            "page_limit": 4,
+            "columns": 4,
+            "show_titles": true,
+            "show_excerpts": false
+          }
+        }
+      },
+      "block_order": [
+        "mega_menu_gnx74G",
+        "collection_products_V3TWyp",
+        "pages_menu_Emnpq9"
+      ],
+      "settings": {
+        "logo_position": "middle-left",
+        "mobile_logo_position": "center",
+        "sticky_header_type": "always",
+        "show_line_separator": false,
+        "color_scheme": "scheme-1",
+        "menu_color_scheme": "",
+        "enable_country_selector": true,
+        "enable_language_selector": true,
+        "enable_customer_avatar": true,
+        "margin_bottom": 0,
+        "padding_top": 20,
+        "padding_bottom": 20,
+        "transparent": true,
+        "transparent_font_colour": "#ffffff",
+        "transparent_logo_colour": "white",
+        "transparent_blurred_background": 0,
+        "transparent_hover": false,
+        "transparent_sticky": true,
+        "transparent_sticky_first_section": true,
+        "transparent_navigation": true
+      }
+    },
+    "breadcrumbs_T3dkib": {
+      "type": "breadcrumbs",
+      "settings": {
+        "enable_breadcrumbs": true,
+        "enable_breadcrumbs_mobile": true,
+        "enable_dynamic_loading": true,
+        "enable_first_collection_fallback": true,
+        "breadcrumb_menu": "main-menu",
+        "ignore_level1": true,
+        "full_page": false,
+        "color_scheme": "",
+        "breadcrumb_separator": "data:image/svg+xml;base64,PHN2ZyB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOmNjPSJodHRwOi8vY3JlYXRpdmVjb21tb25zLm9yZy9ucyMiIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyIgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczpzb2RpcG9kaT0iaHR0cDovL3NvZGlwb2RpLnNvdXJjZWZvcmdlLm5ldC9EVEQvc29kaXBvZGktMC5kdGQiIHhtbG5zOmlua3NjYXBlPSJodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy9uYW1lc3BhY2VzL2lua3NjYXBlIiB3aWR0aD0iNDMxLjA5cHgiIGhlaWdodD0iNjAwcHgiIGlkPSJzdmcyIiBzb2RpcG9kaTp2ZXJzaW9uPSIwLjMyIiBpbmtzY2FwZTp2ZXJzaW9uPSIwLjQ4LjQgcjk5MzkiIHNvZGlwb2RpOmRvY25hbWU9IkJyZWFkY3J1bWJfc2VwYXJhdG9yMi5zdmciIGlua3NjYXBlOm91dHB1dF9leHRlbnNpb249Im9yZy5pbmtzY2FwZS5vdXRwdXQuc3ZnLmlua3NjYXBlIiB2ZXJzaW9uPSIxLjAiPgogIDxkZWZzIGlkPSJkZWZzNCI+CiAgICA8aW5rc2NhcGU6cGVyc3BlY3RpdmUgc29kaXBvZGk6dHlwZT0iaW5rc2NhcGU6cGVyc3AzZCIgaW5rc2NhcGU6dnBfeD0iMCA6IDUyNi4xODEwOSA6IDEiIGlua3NjYXBlOnZwX3k9IjAgOiAxMDAwIDogMCIgaW5rc2NhcGU6dnBfej0iNzQ0LjA5NDQ4IDogNTI2LjE4MTA5IDogMSIgaW5rc2NhcGU6cGVyc3AzZC1vcmlnaW49IjM3Mi4wNDcyNCA6IDM1MC43ODczOSA6IDEiIGlkPSJwZXJzcGVjdGl2ZTEwIi8+CiAgPC9kZWZzPgogIDxzb2RpcG9kaTpuYW1lZHZpZXcgaWQ9ImJhc2UiIHBhZ2Vjb2xvcj0iI2ZmZmZmZiIgYm9yZGVyY29sb3I9IiM2NjY2NjYiIGJvcmRlcm9wYWNpdHk9IjEuMCIgaW5rc2NhcGU6cGFnZW9wYWNpdHk9IjAuMCIgaW5rc2NhcGU6cGFnZXNoYWRvdz0iMiIgaW5rc2NhcGU6em9vbT0iMSIgaW5rc2NhcGU6Y3g9IjE3My44MDgyMyIgaW5rc2NhcGU6Y3k9IjMyMy41OTg5NiIgaW5rc2NhcGU6ZG9jdW1lbnQtdW5pdHM9InB4IiBpbmtzY2FwZTpjdXJyZW50LWxheWVyPSJsYXllcjEiIHNob3dncmlkPSJmYWxzZSIgaW5rc2NhcGU6d2luZG93LXdpZHRoPSIxNjAwIiBpbmtzY2FwZTp3aW5kb3ctaGVpZ2h0PSI4MzciIGlua3NjYXBlOndpbmRvdy14PSItOCIgaW5rc2NhcGU6d2luZG93LXk9Ii04IiBpbmtzY2FwZTp3aW5kb3ctbWF4aW1pemVkPSIxIi8+CiAgPG1ldGFkYXRhIGlkPSJtZXRhZGF0YTciPgogICAgPHJkZjpSREY+CiAgICAgIDxjYzpXb3JrIHJkZjphYm91dD0iIj4KICAgICAgICA8ZGM6Zm9ybWF0PmltYWdlL3N2Zyt4bWw8L2RjOmZvcm1hdD4KICAgICAgICA8ZGM6dHlwZSByZGY6cmVzb3VyY2U9Imh0dHA6Ly9wdXJsLm9yZy9kYy9kY21pdHlwZS9TdGlsbEltYWdlIi8+CiAgICAgIDwvY2M6V29yaz4KICAgIDwvcmRmOlJERj4KICA8L21ldGFkYXRhPgogIDxnIGlua3NjYXBlOmxhYmVsPSJDYWxxdWUgMSIgaW5rc2NhcGU6Z3JvdXBtb2RlPSJsYXllciIgaWQ9ImxheWVyMSI+CiAgICA8cmVjdCBzdHlsZT0iZmlsbDojMzMzMzMzO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0icmVjdDI0MDciIHdpZHRoPSI0OC43NjEyODgiIGhlaWdodD0iMjk1LjcyMzA1IiB4PSItMzMzLjYyMTQ2IiB5PSItNTU3Ljk5MDQyIiB0cmFuc2Zvcm09Im1hdHJpeCgtMC45ODIxNzk1OSwtMC4xODc5NDQ4LDAuNDYxMDk4NjgsLTAuODg3MzQ4ODYsMCwwKSIvPgogICAgPHJlY3Qgc3R5bGU9ImZpbGw6IzMzMzMzMztmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InJlY3QyMzg0IiB3aWR0aD0iNDguNjk5MDc4IiBoZWlnaHQ9IjI4Ny4xOTUzMSIgeD0iLTQzLjkxOTE4NiIgeT0iNTcuMzAwMDcyIiB0cmFuc2Zvcm09Im1hdHJpeCgtMC45ODM0MzQyOSwwLjE4MTI2NSwwLjQ3NDc5MDIsMC44ODAwOTkwMSwwLDApIi8+CiAgPC9nPgo8L3N2Zz4=",
+        "padding": 16
+      }
+    }
+  },
+  "order": [
+    "announcement-bar",
+    "header",
+    "breadcrumbs_T3dkib"
+  ]
+}

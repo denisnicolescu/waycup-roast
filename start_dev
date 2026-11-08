@@ -1,0 +1,26 @@
+#!/bin/bash
+
+function start_webpack {
+  echo "Starting Webpack ($1) $2"
+  npx webpack --config "$1" $2 &
+}
+
+function run_shopify_dev {
+    echo "Starting Shopify theme dev..."
+    shopify theme dev --store=bluebird-gpmd.myshopify.com --port=9393
+}
+
+# Run webpack without watch first to make sure we build it
+start_webpack "webpack.config.js"
+wait
+start_webpack "webpack.bundle.config.js"
+wait
+
+# Start webpack in watch mode
+start_webpack "webpack.config.js" "--watch"
+start_webpack "webpack.bundle.config.js" "--watch"
+echo "Started webpack bundle config in watch mode"
+
+# Start Shopify dev server
+run_shopify_dev
+wait

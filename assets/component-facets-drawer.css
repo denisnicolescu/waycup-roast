@@ -1,0 +1,269 @@
+/* Drawer container — independent of component-cart-drawer.css */
+.collection-filters-drawer-section .drawer.section-renderer {
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100%;
+  display: none;
+  justify-content: flex-end;
+  background-color: rgba(var(--color-foreground), 0.5);
+  cursor: pointer;
+}
+.collection-filters-drawer-section .drawer.section-renderer.active {
+  display: flex;
+}
+.collection-filters-drawer-section .drawer__inner {
+  height: 100%;
+  width: 40rem;
+  max-width: calc(100vw - 3rem);
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.2s ease;
+  cursor: default;
+}
+.collection-filters-drawer-section .drawer.active .drawer__inner {
+  transform: translateX(0);
+}
+.collection-filters-drawer-section .drawer__header {
+  padding: 2rem;
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+.collection-filters-drawer-section .drawer__heading {
+  font-size: 1.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  margin: 0;
+}
+.collection-filters-drawer-section .drawer__close {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 4.4rem;
+  height: 4.4rem;
+  min-width: 4.4rem;
+  min-height: 4.4rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgb(var(--color-foreground));
+  flex-shrink: 0;
+}
+.collection-filters-drawer-section .drawer__close .svg-wrapper {
+  display: flex;
+  width: 2rem;
+  height: 2rem;
+}
+.collection-filters-drawer-section .drawer__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.collection-filters-drawer-section .drawer__body > facet-filters-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Neutralise component-facets.css global .mobile-facets overlay */
+.collection-filters-drawer-section .mobile-facets {
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: auto !important;
+  background-color: transparent !important;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.collection-filters-drawer-section .mobile-facets__inner {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: auto;
+  max-width: none;
+  margin-left: 0;
+  height: auto;
+  pointer-events: auto;
+  transform: none !important;
+  border: none;
+  filter: none;
+  background-color: transparent;
+}
+.collection-filters-drawer-section .mobile-facets__main {
+  overflow-y: auto;
+  min-height: 0;
+  flex: 1;
+  padding: 0;
+}
+.collection-filters-drawer-section .mobile-facets__main > * {
+  flex-shrink: 0;
+}
+.collection-filters-drawer-section .mobile-facets__submenu {
+  position: static;
+  transform: none;
+  visibility: visible;
+  height: auto;
+  overflow-y: visible;
+}
+.collection-filters-drawer-section .mobile-facets__details[open] > .mobile-facets__submenu {
+  transform: none;
+}
+.collection-filters-drawer-section .mobile-facets__close-button {
+  display: none;
+}
+
+/* Accordion summaries */
+.collection-filters-drawer-section .mobile-facets__summary {
+  padding: 1.6rem 2rem;
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.06);
+  list-style: none;
+}
+.collection-filters-drawer-section .mobile-facets__summary::-webkit-details-marker {
+  display: none;
+}
+.collection-filters-drawer-section .mobile-facets__summary > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.collection-filters-drawer-section .mobile-facets__summary span:first-child {
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06rem;
+}
+.collection-filters-drawer-section .mobile-facets__arrow {
+  display: inline-flex;
+  transition: transform 0.3s ease;
+  width: 1.2rem;
+  height: 1.2rem;
+  opacity: 0.4;
+}
+.collection-filters-drawer-section details[open] > .mobile-facets__summary .mobile-facets__arrow {
+  transform: rotate(90deg);
+}
+
+/* Filter list items */
+.collection-filters-drawer-section .mobile-facets__list {
+  padding: 0.8rem 2rem 1.2rem;
+}
+.collection-filters-drawer-section .mobile-facets__item {
+  padding: 0.5rem 0;
+}
+.collection-filters-drawer-section .mobile-facets__label {
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 0;
+  cursor: pointer;
+  position: relative;
+  width: 100%;
+  transition: color 0.15s ease;
+}
+.collection-filters-drawer-section .mobile-facets__label.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+.collection-filters-drawer-section .mobile-facets__label.active {
+  background: rgba(var(--color-foreground), 0.04);
+  margin: 0 -2rem;
+  padding: 0.8rem 2rem;
+  width: calc(100% + 4rem);
+}
+
+/* Hide Dawn's SVG checkbox icons — we use CSS-only checkbox */
+.collection-filters-drawer-section .mobile-facets__label > svg,
+.collection-filters-drawer-section .mobile-facets__label > .icon-checkmark,
+.collection-filters-drawer-section .mobile-facets__highlight {
+  display: none;
+}
+
+/* CSS-only custom checkbox */
+.collection-filters-drawer-section input.mobile-facets__checkbox[type='checkbox'] {
+  position: relative !important;
+  width: 1.6rem !important;
+  height: 1.6rem !important;
+  min-width: 1.6rem;
+  margin: 0;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  border: 1.5px solid rgba(var(--color-foreground), 0.3) !important;
+  border-radius: 0.2rem;
+  background: transparent;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  flex-shrink: 0;
+  left: auto !important;
+  top: auto !important;
+  z-index: auto !important;
+  opacity: 1 !important;
+}
+.collection-filters-drawer-section input.mobile-facets__checkbox[type='checkbox']:checked {
+  background-color: rgb(var(--color-foreground));
+  border-color: rgb(var(--color-foreground)) !important;
+}
+.collection-filters-drawer-section input.mobile-facets__checkbox[type='checkbox']:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: solid rgb(var(--color-background));
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(45deg);
+}
+.collection-filters-drawer-section input.mobile-facets__checkbox[type='checkbox']:hover {
+  border-color: rgba(var(--color-foreground), 0.6) !important;
+}
+
+/* Text & footer */
+.collection-filters-drawer-section .facet-checkbox__text,
+.collection-filters-drawer-section .facet-checkbox__text-label {
+  font-size: 1.3rem;
+}
+.collection-filters-drawer-section .mobile-facets__footer {
+  position: static;
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 2rem 1.2rem;
+}
+.collection-filters-drawer-section .mobile-facets__clear {
+  font-size: 1.2rem;
+}
+.collection-filters-drawer-section .mobile-facets__info {
+  font-size: 1.2rem;
+  padding: 0.8rem 2rem 0;
+  opacity: 0.5;
+}
+.collection-filters-drawer-section .facets__price {
+  padding: 0.4rem 2rem 0.8rem;
+}
+.collection-filters-drawer-section .mobile-facets__main > .mobile-facets__footer:last-child {
+  margin-top: auto;
+  border-top: 1px solid rgba(var(--color-foreground), 0.08);
+  border-bottom: none;
+  padding: 1.6rem 2rem;
+}

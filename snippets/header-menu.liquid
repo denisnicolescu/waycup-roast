@@ -1,0 +1,24 @@
+{% comment %}
+  Renders a simple horizontal menu block with first-level links only (no dropdowns).
+  
+  Accepts:
+  - menu: the `link_list` object from the block
+  - block: the block object (for schema attributes)
+  
+  Usage:
+  {% render 'header-menu', menu: block.settings.menu, block: block %}
+{% endcomment %}
+
+{%- for link in menu.links -%}
+  <li class="header__menu-block"{% if forloop.first %} {{ block.shopify_attributes }}{% endif %}>
+    <a
+      href="{{ link.url }}"
+      class="header__menu-item list-menu__item link link--text focus-inset"
+      {% if link.current %}aria-current="page"{% endif %}
+    >
+      <span{% if link.current %} class="header__active-menu-item"{% endif %}>
+        {{- link.title | escape -}}
+      </span>
+    </a>
+  </li>
+{%- endfor -%}

@@ -1,0 +1,21 @@
+{% comment %}
+  Renders a simple flat menu block in the drawer (only first link).
+  Accepts:
+  - menu: link_list object
+  - block: block object
+{% endcomment %}
+
+{% assign menu = block.settings.menu %}
+{% assign first_link = menu.links.first %}
+
+{% if first_link %}
+  <li {{ block.shopify_attributes }}>
+    <a
+      href="{{ first_link.url }}"
+      class="menu-drawer__menu-item list-menu__item link link--text focus-inset"
+      {% if first_link.current %} aria-current="page" {% endif %}
+    >
+      {{ first_link.title | escape }}
+    </a>
+  </li>
+{% endif %}

@@ -1,0 +1,14 @@
+.pdf-download-wrapper a.pdf-download {
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+  text-decoration: none;
+  color: inherit;
+  padding: 1rem 0;
+}
+
+.pdf-download-wrapper .para {
+  display: block;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+}

@@ -1,0 +1,253 @@
+{%- style -%}
+  body {grid-template-rows: auto auto auto 1fr !important;}
+{%- endstyle -%}
+{% if section.settings.enable_breadcrumbs and template != 'index' and template != 'cart' %}
+  {% if section.settings.breadcrumb_separator contains 'svg' %}
+    {% assign separatorClass = 'svg' %}
+  {% else %}
+    {% assign separatorClass = 'separator' %}
+  {% endif %}
+  <style>
+    .breadcrumbs {
+      --breadcrumb-separator: {% if separatorClass == 'svg' %}url({% else %}'{% endif %}{{ section.settings.breadcrumb_separator | replace: "'", "\\'" }}{% if separatorClass == 'svg' %}){% else %}'{% endif %};
+      --breadcrumb-padding: {{ section.settings.padding }}px;
+    }
+  </style>
+  {{ 'breadcrumbs.css' | asset_url | stylesheet_tag: preload: true }}
+
+  <nav class="breadcrumbs{% if section.settings.full_page == false %} page-width{% endif %} color-{{ section.settings.color_scheme }}{% unless section.settings.enable_breadcrumbs_mobile %} hide-mobile{% endunless %}{% if section.settings.enable_dynamic_loading and template contains 'product' or section.settings.enable_dynamic_loading and template contains 'collection' %} invisible{% endif %}"
+       aria-label="{{ 'breadcrumb.label' | t }}">
+    <ol class="{{ separatorClass }}">
+      <li><a href="/">{{ 'general.homepage.title' | t }}</a></li>
+      {%- if template contains 'product' -%}
+      {% assign collections = product.metafields.breadcrumb.default_collection.value %}
+        {% if collections.count > 0 %}
+          {% for collection in collections %}
+            <li class="dynamic-breadcrumb-removable{% if collections.count == 1 %} onlyone{% endif %}">
+              <a href="{{ collection.url }}">{{ collection.title }}</a>
+            </li>
+          {% endfor %}
+        {% else %}
+          {%- if section.settings.enable_first_collection_fallback and product.collections -%}
+            {% assign collection = product.collections | first %}
+            {% if collection != blank %}
+              <li class="dynamic-breadcrumb-removable onlyone"><a href="{{ collection.url }}">{{ collection.title }}</a></li>
+            {%- endif -%}
+          {%- endif -%}
+        {% endif %}
+        <li><a href="{{ product.url }}" aria-current="page">{{ product.title }}</a> </li>
+      {% elsif template contains 'collection' %}
+        <li><a href="{{ collection.url }}" aria-current="page">{{ collection.title }}</a></li>
+      {% elsif template contains 'blog' %}
+        <li><a href="{{ blog.url }}" aria-current="true">{{ blog.title }}</a></li>
+      {% elsif template contains 'article' %}
+        <li><a href="{{ blog.url }}">{{ blog.title }}</a></li>
+        <li><a href="{{ article.url }}" aria-current="page">{{ article.title }}</a></li>
+      {% elsif template contains 'page' %}
+        <li><a href="{{ page.url }}" aria-current="page">{{ page.title }}</a></li>
+      {% endif %}
+    </ol>
+  </nav>
+
+  {% if section.settings.enable_dynamic_loading and template contains 'product' or section.settings.enable_dynamic_loading and template contains 'collection' %}
+    {% assign menu = section.settings.breadcrumb_menu | default: "main-menu" %}
+    <script>
+      window.breadcrumbs = {
+        {%- for level1 in linklists[menu].links -%}
+          {%- if forloop.first == false %},{%- endif %}
+          "{{ level1.url }}": {
+            "title": [{{ level1.title | json }}],
+            "urls": ["{{ level1.url }}"]
+          }
+          {%- for level2 in level1.links -%}
+            , "{{ level2.url }}": {
+              "title": [{{ level2.title | json }}{% if section.settings.ignore_level1 == false %}, {{ level1.title | json }}{% endif %}],
+              "urls": ["{{ level2.url }}"{% if section.settings.ignore_level1 == false %}, "{{ level1.url }}"{% endif %}]
+            }
+            {%- for level3 in level2.links -%}
+            , "{{ level3.url }}": {
+              "title": [{{ level3.title | json }}, {{ level2.title | json }}{% if section.settings.ignore_level1 == false %}, {{ level1.title | json }}{% endif %}],
+              "urls": ["{{ level3.url }}", "{{ level2.url }}"{% if section.settings.ignore_level1 == false %}, "{{ level1.url }}"{% endif %}]
+              }
+              {%- for level4 in level3.links -%}
+              , "{{ level4.url }}": {
+                "title": [{{ level4.title | json }}, {{ level3.title | json }}, {{ level2.title | json }}{% if section.settings.ignore_level1 == false %}, {{ level1.title | json }}{% endif %}],
+                "urls": ["{{ level4.url }}", "{{ level3.url }}", "{{ level2.url }}"{% if section.settings.ignore_level1 == false %}, "{{ level1.url }}"{% endif %}]
+                }
+                {%- for level5 in level4.links -%}
+                , "{{ level5.url }}": {
+                  "title": [{{ level5.title | json }}, {{ level4.title | json }}, {{ level3.title | json }}, {{ level2.title | json }}{% if section.settings.ignore_level1 == false %}, {{ level1.title | json }}{% endif %}],
+                  "urls": ["{{ level5.url }}", "{{ level4.url }}", "{{ level3.url }}", "{{ level2.url }}"{% if section.settings.ignore_level1 == false %}, "{{ level1.url }}"{% endif %}]
+                }
+                {%- endfor -%}
+              {%- endfor -%}
+            {%- endfor -%}
+          {%- endfor -%}
+      {%- endfor -%}
+      };
+    </script>
+    <script src="{{ 'breadcrumbs.min.js' | asset_url }}" defer="defer"></script>
+  {% else %}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "{{ shop.url }}"
+    }
+      {%- if template contains 'product' -%}
+        {% assign collections = product.metafields.breadcrumb.default_collection.value %}
+        {% if collections.count > 0 %}
+          {% for collection in collections %}
+          ,{
+            "@type": "ListItem",
+            "position": {{ forloop.index | plus: 1 }},
+            "name": {{ collection.title | json }},
+            "item": "{{ shop.url }}{{ collection.url }}"
+          }
+        {% endfor %}
+        {% else %}
+          {%- if product.collections.size > 0 -%}
+            {% assign collection = product.collections | first %}
+          ,{
+            "@type": "ListItem",
+            "position": 2,
+            "name": {{ collection.title | json }},
+            "item": "{{ shop.url }}{{ collection.url }}"
+          }
+        {%- endif -%}
+        {% endif %}
+      ,{
+        "@type": "ListItem",
+        "position": {% if collections.count > 0 %}{{ collections.count | plus: 2 }}{% elsif product.collections.size > 0 %}3{% else %}2{% endif %},
+        "name": {{ product.title | json }},
+        "item": "{{ shop.url }}{{ product.url }}"
+      }
+    {% elsif template contains 'collection' %}
+      ,{
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ collection.title | json }},
+        "item": "{{ shop.url }}{{ collection.url }}"
+      }
+    {% elsif template contains 'blog' %}
+      ,{
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ blog.title | json }},
+        "item": "{{ shop.url }}/blogs/{{ blog.handle }}"
+      }
+      {% if article %}
+      ,{
+        "@type": "ListItem",
+        "position": 3,
+        "name": {{ article.title | json }},
+        "item": "{{ shop.url }}{{ article.url }}"
+      }
+      {% endif %}
+      {% elsif template contains 'page' %}
+      ,{
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ page.title | json }},
+        "item": "{{ shop.url }}{{ page.url }}"
+      }
+    {% endif %}
+      ]
+    }
+    </script>
+  {% endif %}
+{% endif %}
+
+{% schema %}
+{
+  "name": "Breadcrumbs",
+  "tag": "section",
+  "class": "section breadcrumbs-section",
+  "enabled_on": {
+    "groups": [
+      "header"
+    ]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_breadcrumbs",
+      "label": "Enable breadcrumbs",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_breadcrumbs_mobile",
+      "label": "Display breadcrumbs on mobile",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_dynamic_loading",
+      "label": "Enable dynamic breadcrumb loading on product and collection pages",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_first_collection_fallback",
+      "label": "Use first collection as fallback",
+      "default": true
+    },
+    {
+      "type": "link_list",
+      "id": "breadcrumb_menu",
+      "label": "Navigation menu for breadcrumb hierarchy",
+      "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "ignore_level1",
+      "label": "Ignore top level from hierarchy",
+      "info": "E.g. the main-menu has a top level called \"Shop\" \"Catalog\" etc"
+    },
+    {
+      "type": "header",
+      "content": "Design"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_page",
+      "label": "Full Page",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "textarea",
+      "id": "breadcrumb_separator",
+      "label": "Breadcrumb separator",
+      "default": ">",
+      "info": "Can be any text or data:image svg"
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Breadcrumbs"
+    }
+  ]
+}
+{% endschema %}

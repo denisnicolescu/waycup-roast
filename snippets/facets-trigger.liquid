@@ -1,0 +1,244 @@
+{% comment %}
+  Lightweight collection filter trigger bar.
+  Self-contained styles — no dependency on component-facets.css for initial render.
+
+  Accepts:
+  - results: {Object} Collection or Search object
+  - enable_filtering: {Boolean}
+  - enable_sorting: {Boolean}
+  - paginate: {Object}
+{% endcomment %}
+
+{%- liquid
+  assign sort_by = results.sort_by | default: results.default_sort_by
+  assign total_active_values = 0
+  if results.url
+    assign results_url = results.url
+  else
+    assign terms = results.terms | escape
+    assign results_url = '?q=' | append: terms | append: '&options%5Bprefix%5D=last&sort_by=' | append: sort_by
+  endif
+
+  for filter in results.filters
+    assign total_active_values = total_active_values | plus: filter.active_values.size
+    if filter.type == 'price_range'
+      if filter.min_value.value != null or filter.max_value.value != null
+        assign total_active_values = total_active_values | plus: 1
+      endif
+    endif
+  endfor
+-%}
+
+{{ 'component-facets-trigger.css' | asset_url | stylesheet_tag }}
+{{ 'component-facets-drawer.css' | asset_url | stylesheet_tag }}
+
+<div class="facets-container facets-container-drawer facets-container--trigger">
+  <div class="facets-trigger">
+    {%- if enable_filtering -%}
+      <section-renderer
+        data-url="{{ results.url }}?section_id=collection-filters-drawer"
+        data-type="drawer"
+        data-target="#collection-filters-drawer .drawer__body"
+        data-script="{{ 'facets.min.js' | asset_url }}"
+        data-css="{{ 'component-facets.css' | asset_url }}"
+      >
+        <button type="button" class="facets-trigger__button">
+          <span class="svg-wrapper">
+            {{- 'icon-filter.svg' | inline_asset_content -}}
+          </span>
+          <span>{{ 'products.facets.filter_button' | t }}</span>
+          {%- if total_active_values > 0 -%}
+            <span class="facets-trigger__count">({{ total_active_values }})</span>
+          {%- endif -%}
+        </button>
+      </section-renderer>
+    {%- endif -%}
+
+    {%- if enable_sorting -%}
+      <div class="facets-trigger__sort">
+        <lazy-loading-js data-url="{{ 'facets.min.js' | asset_url }}">
+          <facet-filters-form>
+            <form id="FacetSortDrawerForm">
+              <div class="sorting caption">
+                <div class="facets-trigger__sort-inner">
+                  <label for="SortBy">{{ 'products.facets.sort_by_label' | t }}</label>
+                  <div class="select">
+                    <select
+                      name="sort_by"
+                      class="select__select caption-large"
+                      id="SortBy"
+                      aria-describedby="a11y-refresh-page-message"
+                    >
+                      {%- for option in results.sort_options -%}
+                        <option
+                          value="{{ option.value | escape }}"
+                          {% if option.value == sort_by %}
+                            selected="selected"
+                          {% endif %}
+                        >
+                          {{ option.name | escape }}
+                        </option>
+                      {%- endfor -%}
+                    </select>
+                    <span class="svg-wrapper">
+                      {{- 'icon-caret.svg' | inline_asset_content -}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              {% if results.current_vendor or results.current_type %}
+                <input type="hidden" name="q" value="{{ results.current_vendor }}{{ results.current_type }}">
+              {% endif %}
+              {%- if results.terms -%}
+                <input type="hidden" name="q" value="{{ results.terms | escape }}">
+                <input name="options[prefix]" type="hidden" value="last">
+              {%- endif -%}
+            </form>
+          </facet-filters-form>
+        </lazy-loading-js>
+      </div>
+    {%- endif -%}
+
+    <div class="product-count light small-hide facets-trigger__product-count" role="status">
+      <p class="facets-trigger__count-text">
+        <span id="ProductCountDesktop">
+          {%- if results.results_count -%}
+            {{ 'templates.search.results_with_count' | t: terms: results.terms, count: results.results_count }}
+          {%- elsif results.products_count == results.all_products_count -%}
+            {{ 'products.facets.product_count_simple' | t: count: results.products_count }}
+          {%- else -%}
+            {{ 'products.facets.product_count' | t: product_count: results.products_count, count: results.all_products_count }}
+          {%- endif -%}
+        </span>
+      </p>
+      {%- render 'loading-spinner' -%}
+    </div>
+
+    <div class="product-count light medium-hide large-up-hide facets-trigger__product-count" role="status">
+      <p class="facets-trigger__count-text">
+        <span id="ProductCount">
+          {%- if results.results_count -%}
+            {{ 'templates.search.results_with_count' | t: terms: results.terms, count: results.results_count }}
+          {%- elsif results.products_count == results.all_products_count -%}
+            {{ 'products.facets.product_count_simple' | t: count: results.products_count }}
+          {%- else -%}
+            {{ 'products.facets.product_count' | t: product_count: results.products_count, count: results.all_products_count }}
+          {%- endif -%}
+        </span>
+      </p>
+      {%- render 'loading-spinner' -%}
+    </div>
+  </div>
+
+  {%- if total_active_values > 0 -%}
+    <script src="{{ 'facets.min.js' | asset_url }}" defer></script>
+  {%- endif -%}
+
+  <div class="active-facets active-facets-desktop small-hide facets-trigger__pills">
+    {%- for filter in results.filters -%}
+      {%- for value in filter.active_values -%}
+        <facet-remove>
+          <a href="{{ value.url_to_remove }}" class="facets-trigger__pill" role="button">
+            {{ filter.label | escape }}: {{ value.label | escape }}
+            <span class="svg-wrapper">{{- 'icon-close-small.svg' | inline_asset_content -}}</span>
+            <span class="visually-hidden">{{ 'products.facets.clear_filter' | t }}</span>
+          </a>
+        </facet-remove>
+      {%- endfor -%}
+      {%- if filter.type == 'price_range' -%}
+        {%- assign min = filter.min_value.value -%}
+        {%- assign max = filter.max_value.value -%}
+        {%- if min != null or max != null -%}
+          <facet-remove>
+            <a href="{{ filter.url_to_remove }}" class="facets-trigger__pill" role="button">
+              {{ min | default: 0 | money }} - {{ max | default: filter.range_max | money }}
+              <span class="svg-wrapper">{{- 'icon-close-small.svg' | inline_asset_content -}}</span>
+              <span class="visually-hidden">{{ 'products.facets.clear_filter' | t }}</span>
+            </a>
+          </facet-remove>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if total_active_values > 0 -%}
+      <facet-remove class="active-facets__button-wrapper">
+        <a href="{{ results_url }}" class="facets-trigger__clear" role="button">
+          {{ 'products.facets.clear_all' | t }}
+        </a>
+      </facet-remove>
+    {%- endif -%}
+  </div>
+
+  <div class="active-facets active-facets-mobile medium-hide large-up-hide facets-trigger__pills">
+    {%- for filter in results.filters -%}
+      {%- for value in filter.active_values -%}
+        <facet-remove>
+          <a href="{{ value.url_to_remove }}" class="facets-trigger__pill" role="button">
+            {{ filter.label | escape }}: {{ value.label | escape }}
+            <span class="svg-wrapper">{{- 'icon-close-small.svg' | inline_asset_content -}}</span>
+            <span class="visually-hidden">{{ 'products.facets.clear_filter' | t }}</span>
+          </a>
+        </facet-remove>
+      {%- endfor -%}
+      {%- if filter.type == 'price_range' -%}
+        {%- assign min = filter.min_value.value -%}
+        {%- assign max = filter.max_value.value -%}
+        {%- if min != null or max != null -%}
+          <facet-remove>
+            <a href="{{ filter.url_to_remove }}" class="facets-trigger__pill" role="button">
+              {{ min | default: 0 | money }} - {{ max | default: filter.range_max | money }}
+              <span class="svg-wrapper">{{- 'icon-close-small.svg' | inline_asset_content -}}</span>
+              <span class="visually-hidden">{{ 'products.facets.clear_filter' | t }}</span>
+            </a>
+          </facet-remove>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if total_active_values > 0 -%}
+      <facet-remove class="active-facets__button-wrapper">
+        <a href="{{ results_url }}" class="facets-trigger__clear" role="button">
+          {{ 'products.facets.clear_all' | t }}
+        </a>
+      </facet-remove>
+    {%- endif -%}
+  </div>
+
+  {%- if enable_filtering -%}
+    <div class="collection-filters-drawer-section" id="collection-filters-drawer">
+      <div class="drawer section-renderer">
+        <div
+          class="drawer__inner gradient color-{{ settings.cart_color_scheme }}"
+          role="dialog"
+          aria-modal="true"
+          aria-label="{{ 'products.facets.filter_button' | t }}"
+          tabindex="-1"
+        >
+          <div class="drawer__header">
+            <h2 class="drawer__heading">{{ 'products.facets.filter_button' | t }}</h2>
+            <button
+              class="drawer__close"
+              type="button"
+              aria-label="{{ 'accessibility.close' | t }}"
+            >
+              <span class="svg-wrapper">
+                {{- 'icon-close.svg' | inline_asset_content -}}
+              </span>
+            </button>
+          </div>
+          <div class="drawer__body"></div>
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+
+  <script>
+    (function() {
+      var sr = document.querySelector('section-renderer[data-url*="collection-filters-drawer"]');
+      if (!sr) return;
+      var params = window.location.search.slice(1);
+      if (params) {
+        var base = sr.dataset.url.split('?')[0];
+        sr.dataset.url = base + '?section_id=collection-filters-drawer&' + params;
+      }
+    })();
+  </script>
+</div>

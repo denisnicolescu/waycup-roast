@@ -1,0 +1,32 @@
+{% comment %}
+  Renders the passed content in a modal.
+
+  Accepts:
+  - name: {String} Header text for the modal.
+  - content: {String} The content to display in the modal.
+
+  Usage:
+  {% render 'modal' name: name, content: content %}
+{% endcomment %}
+<modal-dialog id="section-renderer" class="product-popup-modal">
+    <div
+            role="dialog"
+            aria-label="{{ name }}"
+            aria-modal="true"
+            class="product-popup-modal__content"
+            tabindex="-1"
+    >
+        <button
+                id="ModalClose-section"
+                type="button"
+                class="product-popup-modal__toggle"
+                aria-label="{{ 'accessibility.close' | t }}"
+        >
+            {{- 'icon-close.svg' | inline_asset_content -}}
+        </button>
+        <div class="product-popup-modal__content-info">
+            <h2 class="h2">{{ name }}</h2>
+            {{ content }}
+        </div>
+    </div>
+</modal-dialog>

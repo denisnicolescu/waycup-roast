@@ -1,0 +1,22 @@
+{% comment %}
+  Renders a countdown
+
+  Accepts:
+  - datetime: {String} ISO 8601 formatted date string (e.g., "2024-12-31T23:59:59Z") to countdown to.
+  - timezone: {String} Timezone to use for the countdown (e.g., "Europe/London").
+  - hide: {Boolean} Whether to hide the countdown when it reaches 0.
+  - message: {String} The message to display when the countdown reaches 0.
+
+  Usage:
+  {% render 'countdown' date: date, timezone: timezone, hide: hide, message: message %}
+{% endcomment %}
+
+{%- if datetime -%}
+  <h1>{{ datetime }}</h1>
+{%- endif -%}
+<countdown
+  data-datetime="{{ datetime }}"
+  data-timezone="{{ timezone }}"
+  data-hide="{{ hide }}"
+  data-message="{{ message }}"
+></countdown>

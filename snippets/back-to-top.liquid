@@ -1,0 +1,45 @@
+{%- liquid
+  assign btt_size = settings.back_to_top_size
+  assign color_scheme = settings.back_to_top_color_scheme
+  assign btt_radius = settings.back_to_top_border_radius
+  assign btt_padding_tb = settings.back_to_top_padding_top_bottom
+  assign btt_padding_lr = settings.back_to_top_padding_right_left
+  assign btt_bottom_offset = settings.back_to_top_bottom_offset
+  assign btt_side_offset = settings.back_to_top_side_offset
+  assign position = settings.back_to_top_position
+  assign show_text = settings.back_to_top_show_text
+  assign text = settings.back_to_top_text
+  assign text_position = settings.back_to_top_text_position
+  assign svg_enabled = settings.back_to_top_svg_enabled
+  assign custom_svg = settings.back_to_top_custom_svg
+  assign svg_width = settings.back_to_top_svg_width
+  assign svg_height = settings.back_to_top_svg_height
+-%}
+
+<back-to-top
+  class="back-to-top {{ btt_size }} color-{{ color_scheme }}" 
+  data-text-position="{{ text_position }}" 
+  data-btn-position="{{ position }}" 
+  style="
+    --btt-radius: {{ btt_radius }}px;
+    --btt-padding-tb: {{ btt_padding_tb }}px;
+    --btt-padding-lr: {{ btt_padding_lr }}px;
+    --btt-bottom-offset: {{ btt_bottom_offset }}px;
+    --btt-side-offset: {{ btt_side_offset }}px;
+  "
+>
+  {% if show_text %}
+    <span class="back-to-top__text">{{ text }}</span>
+  {% endif %}
+
+  <span 
+    class="back-to-top__icon{% if svg_enabled == false or custom_svg == blank %} back-to-top__icon--default{% endif %}" 
+    style="--svg-width: {{ svg_width }}px; --svg-height: {{ svg_height }}px;"
+  >
+    {% if svg_enabled and custom_svg != blank %}
+      {{ custom_svg }}
+    {% else %}
+      {{- 'icon-arrow.svg' | inline_asset_content -}}
+    {% endif %}
+  </span>
+</back-to-top>

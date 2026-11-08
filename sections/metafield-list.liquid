@@ -1,0 +1,218 @@
+{%- liquid
+  assign visible_items = 0
+
+  if request.page_type == 'product' and product != blank
+    for block in section.blocks
+      assign metafield_key_parts = block.settings.metafield_key | strip | split: '.'
+
+      if metafield_key_parts.size == 2
+        assign metafield_namespace = metafield_key_parts[0] | strip
+        assign metafield_key = metafield_key_parts[1] | strip
+        assign metafield = product.metafields[metafield_namespace][metafield_key]
+
+        if metafield != blank
+          assign visible_items = visible_items | plus: 1
+        endif
+      endif
+    endfor
+  endif
+-%}
+
+{%- if visible_items > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      --metafield-list-columns-desktop: {{ section.settings.columns_desktop }};
+      --metafield-list-columns-mobile: {{ section.settings.columns_mobile }};
+      --metafield-list-padding-top: {{ section.settings.padding_top }}px;
+      --metafield-list-padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  {%- endstyle -%}
+  {{ 'section-product-metafield-list.css' | asset_url | stylesheet_tag }}
+
+  <div class="product-metafield-list color-{{ section.settings.color_scheme }} gradient">
+    <div class="page-width">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="product-metafield-list__heading {{ section.settings.heading_size }}">
+          {{ section.settings.heading }}
+        </h2>
+      {%- endif -%}
+
+      <dl class="product-metafield-list__grid">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign metafield = blank
+            assign metafield_key_parts = block.settings.metafield_key | strip | split: '.'
+
+            if metafield_key_parts.size == 2
+              assign metafield_namespace = metafield_key_parts[0] | strip
+              assign metafield_key = metafield_key_parts[1] | strip
+              assign metafield = product.metafields[metafield_namespace][metafield_key]
+            endif
+          -%}
+
+          {%- if metafield != blank -%}
+            <div
+              class="product-metafield-list__item{% if section.settings.show_dividers %} product-metafield-list__item--border{% endif %}"
+              {{ block.shopify_attributes }}
+            >
+              {%- if block.settings.title != blank -%}
+                <dt class="product-metafield-list__title">
+                  {{ block.settings.title | escape }}
+                </dt>
+              {%- endif -%}
+
+              <dd class="product-metafield-list__value rte">
+                {{ metafield | metafield_tag }}
+              </dd>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </dl>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Product metafield list",
+  "tag": "section",
+  "class": "section",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Product details",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "Small"
+        },
+        {
+          "value": "h1",
+          "label": "Medium"
+        },
+        {
+          "value": "h0",
+          "label": "Large"
+        }
+      ],
+      "default": "h1",
+      "label": "Heading size"
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 column"
+        },
+        {
+          "value": "2",
+          "label": "2 columns"
+        },
+        {
+          "value": "3",
+          "label": "3 columns"
+        },
+        {
+          "value": "4",
+          "label": "4 columns"
+        }
+      ],
+      "default": "2",
+      "label": "Desktop columns"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 column"
+        },
+        {
+          "value": "2",
+          "label": "2 columns"
+        }
+      ],
+      "default": "1",
+      "label": "Mobile columns"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dividers",
+      "default": true,
+      "label": "Show dividers"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "metafield",
+      "name": "Metafield",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Material"
+        },
+        {
+          "type": "text",
+          "id": "metafield_key",
+          "label": "Metafield namespace and key",
+          "info": "For example: custom.material"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product metafield list",
+      "blocks": [
+        {
+          "type": "metafield"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

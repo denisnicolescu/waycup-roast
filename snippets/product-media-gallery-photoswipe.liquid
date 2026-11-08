@@ -1,0 +1,414 @@
+{% comment %}
+  Renders a product media gallery. Should be used with 'media-gallery.js'
+  Also see 'product-media-modal'
+
+  Accepts:
+  - product: {Object} Product liquid object
+  - variant_images: {Array} Product images associated with a variant
+  - limit: {Number} (optional) When passed, limits the number of media items to render
+
+  Usage:
+  {% render 'product-media-gallery' %}
+{% endcomment %}
+
+{%- liquid
+  if section.settings.hide_variants and variant_images.size == product.media.size
+    assign single_media_visible = true
+  endif
+
+  if limit == 1
+    assign single_media_visible = true
+  endif
+
+  assign has_variant = false
+  if product.has_only_default_variant == false
+    assign has_variant = true
+  endif
+
+  assign variant_gallery_count = product.selected_or_first_available_variant.metafields.media.gallery.value.count | default: 0
+
+  if has_variant
+    assign media_count = product.media.size | plus: variant_gallery_count
+  else
+    assign media_count = product.media.size
+  endif
+
+  if section.settings.hide_variants and media_count > 1 and variant_images.size > 0
+    assign media_count = media_count | minus: variant_images.size | plus: 1
+  endif
+
+  if media_count == 1 or single_media_visible
+    assign single_media_visible_mobile = true
+  endif
+
+  if section.settings.media_size == 'large'
+    assign media_width = 0.65
+  elsif section.settings.media_size == 'medium'
+    assign media_width = 0.55
+  elsif section.settings.media_size == 'small'
+    assign media_width = 0.45
+  endif
+
+  assign desktop_layout = section.settings.gallery_layout_photoswipe
+  assign mobile_layout = section.settings.mobile_gallery_layout_photoswipe
+  assign desktop_columns = 1
+  if desktop_layout == 'columns' and media_count > 1
+    assign desktop_columns = 2
+  endif
+
+  assign mobile_columns = 1
+  if mobile_layout == 'columns' and media_count > 1
+    assign mobile_columns = 2
+  endif
+
+  assign eager_loaded = false
+  assign media_position = 0
+-%}
+
+<media-gallery
+  id="MediaGallery-{{ section.id }}"
+  role="region"
+  {% if section.settings.enable_sticky_info %}
+    class="product__column-sticky"
+  {% endif %}
+  aria-label="{{ 'products.product.media.gallery_viewer' | t }}"
+  data-desktop-layout="{{ section.settings.gallery_layout_photoswipe }}"
+  has-variant="{{ has_variant }}"
+>
+  <lazy-loading-js
+    class="pswp-gallery media-fit--{{ media_fit }}"
+    
+    id="gallery--click-to-close"
+    data-url="{{ 'photoswipe-lightbox.min.js' | asset_url }}"
+    data-zoom="{{ zoom_level }}"
+    data-transition="{{ transition }}"
+    data-loop="{{ video_loop }}"
+  >
+    <slider-component id="GalleryViewer-{{ section.id }}" class="slider-mobile-gutter">
+      <ul
+      id="Slider-Gallery-{{ section.id }}"
+      class="product__media-list contains-media grid list-unstyled {% unless section.settings.mobile_thumbnails_photoswipe == 'list' %}slider slider--mobile{% endunless %}"
+      role="list"
+      >
+        {%- if product.selected_or_first_available_variant.featured_media != null -%}
+          {%- assign featured_media = product.selected_or_first_available_variant.featured_media -%}
+          {%- assign media_position = 1 -%}
+          <li
+            id="Slide-{{ section.id }}-{{ featured_media.id }}"
+            class="product__media-item grid__item slider__slide is-active{% if single_media_visible %} product__media-item--single{% endif %}{% if featured_media.media_type != 'image' %} product__media-item--full{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}"
+            data-media-id="{{ section.id }}-{{ featured_media.id }}"
+          >
+            {% assign widths = '600,990,1206,1946,2048,2560,3840' | split: ',' %}{% assign widths = '600,990,1206,1946,2048,2560,3840' | split: ',' %}
+            <a
+              href="{{ featured_media.preview_image | img_url: 'master' }}"
+              data-pswp-width="{{ featured_media.preview_image.width }}"
+              data-pswp-height="{{ featured_media.preview_image.height }}"
+              data-pswp-srcset="
+                {%- for w in widths -%}
+                  {{ featured_media.preview_image.src | img_url: 'master' }}&width={{ w | strip }} {{ w | strip }}w{% unless forloop.last %}, {% endunless %}
+                {%- endfor -%}
+                ,{{ featured_media.preview_image.src | img_url: 'master' }} {{ featured_media.preview_image.width }}w
+              "
+              class="photoswipe-prevent-default not-null"
+              target="_blank"
+              style="--ratio: {{ featured_media.aspect_ratio | default: 1.0 }};"
+            >
+              {%- if eager_loaded == false -%}
+                {%- assign lazy_load = false -%}
+                {%- assign fetch_priority = 'high' -%}
+                {%- assign eager_loaded = true -%}
+              {%- else -%}
+                {%- assign lazy_load = true -%}
+                {%- assign fetch_priority = 'auto' -%}
+              {%- endif -%}
+
+          {% render 'product-thumbnail',
+            media: featured_media,
+            media_count: media_count,
+            position: media_position,
+            desktop_layout: desktop_layout,
+            mobile_layout: mobile_layout,
+            loop: section.settings.enable_video_looping,
+            modal_id: section.id,
+            xr_button: true,
+            media_width: media_width,
+            media_fit: section.settings.media_fit,
+            constrain_to_viewport: section.settings.constrain_to_viewport,
+            lazy_load: lazy_load,
+            fetch_priority: fetch_priority
+          %}
+            </a>
+          </li>
+        {% endif %}
+
+        {% if product.selected_or_first_available_variant.metafields.media.gallery.value %}
+          {% for metafield_media in product.selected_or_first_available_variant.metafields.media.gallery.value %}
+            {%- if eager_loaded == false -%}
+              {%- assign lazy_load = false -%}
+              {%- assign fetch_priority = 'high' -%}
+              {%- assign eager_loaded = true -%}
+            {%- else -%}
+              {%- assign lazy_load = true -%}
+              {%- assign fetch_priority = 'auto' -%}
+            {%- endif -%}
+
+            {%- liquid
+              assign metafield_position_offset = 0
+              if product.selected_or_first_available_variant.featured_media != null
+                assign metafield_position_offset = 1
+              endif
+              assign metafield_position = forloop.index | plus: metafield_position_offset
+            -%}
+
+            <li
+              id="Slide-slide-{{ section.id }}-{{ forloop.index }}"
+              class="product__media-item grid__item slider__slide{% if product.selected_or_first_available_variant.featured_media == nil and forloop.index == 1 %} is-active{% endif %}"
+              data-media-id="{{ section.id }}-metafield-{{ forloop.index }}"
+            >
+
+              {% if metafield_media.media_type == 'video' %}
+                {% assign mp4_source = metafield_media.sources | where: 'mime_type', 'video/mp4' | sort: 'width' | last %}
+                <a
+                  href="{{ mp4_source.url }}"
+                  data-pswp-type="video"
+                  data-pswp-video-src="{{ mp4_source.url }}"
+                  data-pswp-width="{{ metafield_media.preview_image.width }}"
+                  data-pswp-height="{{ metafield_media.preview_image.height }}"
+                  class="photoswipe-prevent-default metafield-media"
+                  target="_blank"
+                  style="--ratio: {{ metafield_media.aspect_ratio | default: 1.0 }};"
+                >
+
+                  <div
+                    class="product-media-container media-type-image media-fit-cover global-media-settings gradient constrain-height"
+                  >
+                    {% render 'product-thumbnail',
+                      media: metafield_media,
+                      media_count: media_count,
+                      position: metafield_position,
+                      desktop_layout: desktop_layout,
+                      mobile_layout: mobile_layout,
+                      loop: section.settings.enable_video_looping,
+                      modal_id: section.id,
+                      xr_button: true,
+                      media_width: media_width,
+                      media_fit: section.settings.media_fit,
+                      constrain_to_viewport: section.settings.constrain_to_viewport,
+                      lazy_load: lazy_load,
+                      fetch_priority: fetch_priority
+                    %}
+                  </div>
+                </a>
+              {% else %}
+              {% assign widths = '600,990,1206,1946,2048,2560,3840' | split: ',' %}
+                <a
+                  href="{{ metafield_media.src | img_url: 'master' }}"
+                  data-pswp-width="{{ metafield_media.width }}"
+                  data-pswp-height="{{ metafield_media.height }}"
+                  data-pswp-srcset="
+                    {%- for w in widths -%}
+                      {{ metafield_media.src | img_url: 'master' }}&width={{ w | strip }} {{ w | strip }}w{% unless forloop.last %}, {% endunless %}
+                    {%- endfor -%}
+                    ,{{ metafield_media.src | img_url: 'master' }} {{ metafield_media.width }}w
+                  "
+                  class="photoswipe-prevent-default metafield-media"
+                  target="_blank"
+                  style="--ratio: {{ metafield_media.aspect_ratio | default: 1.0 }};"
+                >
+                  <div
+                    class="product-media-container media-type-image media-fit-cover global-media-settings gradient constrain-height"
+                  >
+                    {% render 'product-thumbnail',
+                      media: metafield_media,
+                      media_count: media_count,
+                      position: forloop.index,
+                      desktop_layout: desktop_layout,
+                      mobile_layout: mobile_layout,
+                      loop: section.settings.enable_video_looping,
+                      modal_id: section.id,
+                      xr_button: true,
+                      media_width: media_width,
+                      media_fit: section.settings.media_fit,
+                      constrain_to_viewport: section.settings.constrain_to_viewport,
+                      lazy_load: lazy_load,
+                      fetch_priority: fetch_priority
+                    %}
+                  </div>
+                </a>
+              {% endif %}
+            </li>
+          {% endfor %}
+        {% endif %}
+
+        {%- for media in product.media -%}
+          {% if section.settings.hide_variants and variant_images contains media.src %}
+            {% continue %}
+          {% endif %}
+
+          {% if media.id == product.selected_or_first_available_variant.featured_media.id %}
+            {% continue %}
+          {% endif %}
+
+          {%- assign media_position = media_position | plus: 1 -%}
+
+          <li
+            id="Slide-{{ section.id }}-{{ media.id }}"
+            class="product__media-item grid__item slider__slide{% if single_media_visible %} product__media-item--single{% endif %}{% if product.selected_or_first_available_variant.featured_media == nil and forloop.index == 1 %} is-active{% endif %}{% if media.media_type != 'image' %} product__media-item--full{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}"
+            data-media-id="{{ section.id }}-{{ media.id }}"
+          >
+          {% if media.media_type == 'video' %}
+            {% assign mp4_source = media.sources | where: 'mime_type', 'video/mp4' | sort: 'width' | last %}
+            <a
+              href="{{ mp4_source.url }}"
+              data-pswp-type="video"
+              data-pswp-video-src="{{ mp4_source.url }}"
+              data-pswp-width="{{ media.preview_image.width }}"
+              data-pswp-height="{{ media.preview_image.height }}"
+              class="photoswipe-prevent-default regular-media"
+              target="_blank"
+              style="--ratio: {{ media.aspect_ratio | default: 1.0 }};"
+              aria-label="{{ 'products.product.media.open_media' | t: index: forloop.index }}"
+            >
+              {%- if eager_loaded == false -%}
+                {%- assign lazy_load = true -%}
+                {%- assign fetch_priority = 'high' -%}
+                {%- assign eager_loaded = true -%}
+              {%- else -%}
+                {%- assign lazy_load = false -%}
+                {%- assign fetch_priority = 'auto' -%}
+              {%- endif -%}
+
+                {% render 'product-thumbnail',
+                  media: media,
+                  media_count: media_count,
+                  position: media_position,
+                  desktop_layout: desktop_layout,
+                  mobile_layout: mobile_layout,
+                  loop: section.settings.enable_video_looping,
+                  modal_id: section.id,
+                  xr_button: true,
+                  media_width: media_width,
+                  media_fit: section.settings.media_fit,
+                  constrain_to_viewport: section.settings.constrain_to_viewport,
+                  lazy_load: lazy_load
+                %}                   
+            </a>
+          {% elsif media.media_type == 'external_video' %}
+
+            {%- if eager_loaded == false -%}
+              {%- assign lazy_load = false -%}
+              {%- assign fetch_priority = 'high' -%}
+              {%- assign eager_loaded = true -%}
+            {%- else -%}
+              {%- assign lazy_load = true -%}
+              {%- assign fetch_priority = 'auto' -%}
+            {%- endif -%}
+
+            <a
+              href="{{ media.external_id }}"
+              data-pswp-type="external-video"
+              data-pswp-video-id="{{ media.external_id }}"
+              data-pswp-video-host="{{ media.host }}"
+              data-pswp-width="{{ media.preview_image.width }}"
+              data-pswp-height="{{ media.preview_image.height }}"
+              class="photoswipe-prevent-default regular-media"
+              style="--ratio: {{ media.aspect_ratio | default: 1.0 }};"
+              aria-label="{{ 'products.product.media.open_media' | t: index: forloop.index }}"
+            >
+              <div class="photoswipe-external-video-preview">
+                {% render 'product-thumbnail',
+                  media: media,
+                  media_count: media_count,
+                  position: media_position,
+                  desktop_layout: desktop_layout,
+                  mobile_layout: mobile_layout,
+                  loop: section.settings.enable_video_looping,
+                  modal_id: section.id,
+                  xr_button: true,
+                  media_width: media_width,
+                  media_fit: section.settings.media_fit,
+                  constrain_to_viewport: section.settings.constrain_to_viewport,
+                  lazy_load: lazy_load,
+                  fetch_priority: fetch_priority
+                %}
+              </div>
+            </a>
+
+          {% else %}
+            {% assign widths = '600,990,1206,1946,2048,2560,3840' | split: ',' %}
+            <a
+              href="{{ media.src | img_url: 'master' }}"
+              data-pswp-width="{{ media.src.width }}"
+              data-pswp-height="{{ media.src.height }}"
+              data-pswp-srcset="
+              {%- for w in widths -%}
+                {{ media.src | img_url: 'master' }}&width={{ w | strip }} {{ w | strip }}w{% unless forloop.last %}, {% endunless %}
+              {%- endfor -%}
+              ,{{ media.src | img_url: 'master' }} {{ media.width }}w
+            "
+              class="photoswipe-prevent-default regular-media"
+              target="_blank"
+              style="--ratio: {{ media.aspect_ratio | default: 1.0 }};"
+              aria-label="{{ 'products.product.media.open_media' | t: index: forloop.index }}"
+            >
+              {%- if eager_loaded == false -%}
+                {%- assign lazy_load = false -%}
+                {%- assign fetch_priority = 'high' -%}
+                {%- assign eager_loaded = true -%}
+              {%- else -%}
+                {%- assign lazy_load = true -%}
+                {%- assign fetch_priority = 'auto' -%}
+              {%- endif -%}
+
+              {% render 'product-thumbnail',
+                media: media,
+                media_count: media_count,
+                position: media_position,
+                desktop_layout: desktop_layout,
+                mobile_layout: mobile_layout,
+                loop: section.settings.enable_video_looping,
+                modal_id: section.id,
+                xr_button: true,
+                media_width: media_width,
+                media_fit: section.settings.media_fit,
+                constrain_to_viewport: section.settings.constrain_to_viewport,
+                lazy_load: lazy_load
+              %}
+            </a>
+          {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+      {% unless section.settings.mobile_thumbnails_photoswipe == 'list' %}
+        <div class="slider-buttons quick-add-hidden">
+          <button
+            type="button"
+            class="slider-button slider-button--prev"
+            name="previous"
+            aria-label="{{ 'general.slider.previous_slide' | t }}"
+          >
+            <span class="svg-wrapper">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
+          </button>
+          <div class="slider-counter caption">
+            <span class="slider-counter--current">1</span>
+            <span aria-hidden="true"> / </span>
+            <span class="visually-hidden">{{ 'general.slider.of' | t }}</span>
+            <span class="slider-counter--total">{{ media_count }}</span>
+          </div>
+          <button
+            type="button"
+            class="slider-button slider-button--next"
+            name="next"
+            aria-label="{{ 'general.slider.next_slide' | t }}"
+          >
+            <span class="svg-wrapper">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
+          </button>
+        </div>
+      {% endunless %} 
+    </slider-component>
+  </lazy-loading-js>
+</media-gallery>

@@ -1,0 +1,91 @@
+{% comment %}
+  Renders swatch on product cards
+  Accepts:
+  - product
+
+  Usage:
+   {% render 'product-card-swatch',
+      product: card_product
+    %}
+{% endcomment %}
+{%- unless product.has_only_default_variant -%}
+    {%- assign optionsToDisplay = settings.product_card_swatch_options | split: "," -%}
+
+    {%- for option in product.options_with_values -%}
+        {%- if optionsToDisplay contains option.name -%}
+            {%- assign optionIndex = product.options | find_index: option.name | plus: 1 -%}
+            <card-product-swatch
+                class="product-collection-swatch-selector
+                    {% if settings.product_card_swatch_display == 'expand' %} visibility-hidden{% endif %}"
+                role="radiogroup" aria-label="Choose a color"
+                data-display="{{ settings.product_card_swatch_display }}"
+                data-alignment="{{ settings.product_card_swatch_alignment }}"
+            >
+                {%- for value in option.values -%}
+                    {%- if value.swatch and value.available -%}
+                        {%- liquid
+                            assign swatch_value = value.swatch.image | append: value.swatch.color | default: null
+                            assign valueLabel = value | strip
+                            assign optionKey = 'option' | append: optionIndex
+                            assign variant = product.variants | where: optionKey, valueLabel | first
+                        -%}
+                        {%- if swatch_value and value.available and variant -%}
+                            {%-liquid
+                                assign img = variant.featured_image.src | default: null
+                                assign variantId = variant.id | default: null
+                            -%}
+                            {%- capture product_form_id -%}
+                                product-form-{{ template }}-{{ product.id -}}
+                            {%- endcapture -%}
+
+                            {%- capture input_id -%}
+                                {{ section.id }}-{{ product.id }}-{{ option.position }}-{{ forloop.index0 -}}
+                            {%- endcapture -%}
+
+                            {%- capture input_dataset -%}
+                                data-product-url="{{ product.url }}?variant={{ variantId }}"
+                                data-product-image="{{ img }}"
+                            {%- endcapture -%}
+
+                            {%- capture help_text -%}
+                                <span class="visually-hidden">{{ value | escape }}</span>
+                            {%- endcapture -%}
+
+                            {%- if settings.product_card_swatch_image -%}
+                                {%- assign swatch = img | default: value.swatch -%}
+                            {%- else -%}
+                                {%- assign swatch = value.swatch -%}
+                            {%- endif -%}
+                            <div class="swatch-wrapper">
+                                {%- render 'swatch-input', id: input_id, name: product_form_id, value: value, swatch: swatch, checked: value.selected, visually_disabled: false, shape: settings.product_card_swatch_shape, help_text: help_text, additional_props: input_dataset -%}
+                            </div>
+                        {%- endif -%}
+                    {%- endif -%}
+                {%- endfor -%}
+            </card-product-swatch>
+        {% endif %}
+    {%- endfor -%}
+{%- endunless -%}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: |-
+    {%- render 'swatch-input',
+                                            id: input_id,
+                                            name: product_form_id,
+                                            value: value | escape,
+                                            swatch: swatch,
+                                            checked: value.selected,
+                                            visually_disabled: false,
+                                            shape: settings.product_card_swatch_shape,
+                                            help_text: help_text,
+                                            additional_props: input_dataset
+                                    -%}
+  to: "{%- render 'swatch-input', id: input_id, name: product_form_id, value: value,
+    swatch: swatch, checked: value.selected, visually_disabled: false, shape: settings.product_card_swatch_shape,
+    help_text: help_text, additional_props: input_dataset -%}"
+  position: 3036..3281
+{% endcomment %}

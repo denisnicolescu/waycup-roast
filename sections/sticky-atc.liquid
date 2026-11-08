@@ -1,0 +1,124 @@
+{{ 'sticky-atc.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  if content_for_header contains 'section_id'
+    assign section_rendering_mode = true
+  else
+    assign section_rendering_mode = false
+  endif
+
+  assign sticky_atc_position_desktop =  settings.sticky_cart_position_desktop
+  assign sticky_atc_position_mobile =  settings.sticky_cart_position_mobile
+  assign sticky_atc_offset_desktop = settings.sticky_cart_offset_top_desktop
+  assign sticky_atc_offset_mobile = settings.sticky_cart_offset_top_mobile
+  assign sticky_atc_enabled_desktop = settings.sticky_cart_enabled_desktop
+  assign sticky_atc_enabled_mobile = settings.sticky_cart_enabled_mobile
+  assign sticky_atc_image_size_desktop = settings.sticky_cart_image_size_desktop
+  assign sticky_atc_image_size_mobile = settings.sticky_cart_image_size_mobile
+  assign sticky_atc_btn_bgcolor = settings.sticky_cart_button_color_scheme.settings.background
+  assign sticky_atc_btn_textcolor = settings.sticky_cart_button_color_scheme.settings.text
+  assign sticky_atc_hide_variants = settings.sticky_cart_hide_variants_on_mobile
+
+  assign variant = product.selected_or_first_available_variant
+  assign preorder_active = false
+  assign show_preorder = false
+
+  assign preorder_date = product.metafields.pre_order.date
+
+  if settings.enable_preorder and preorder_date != nil and preorder_date != blank
+    assign today = 'now' | date: '%Y-%m-%d'
+    assign preorder_timestamp = preorder_date | date: '%Y-%m-%d'
+
+    if variant != null and variant.requires_shipping
+      if variant.inventory_management != 'shopify' or variant.available == false
+        if preorder_timestamp > today
+          assign show_preorder = true
+          assign preorder_active = true
+        endif
+      endif
+    endif
+  endif
+-%}
+
+{%- if section_rendering_mode or section.settings.always_show == true -%}
+
+  <sticky-atc
+    id="StickyAddToCart"
+    class="sticky-atc-container"
+    data-position-desktop="{{ sticky_atc_position_desktop }}"
+    data-position-mobile="{{ sticky_atc_position_mobile }}"
+    data-enabled-desktop="{{ sticky_atc_enabled_desktop }}"
+    data-enabled-mobile="{{ sticky_atc_enabled_mobile }}"
+    data-money-format="{{ shop.money_format | escape }}"
+    data-product-data="{{ product.variants | json | escape }}"
+    data-preorder-active="{{ preorder_active }}"
+    style="
+      --sticky-atc-top-desktop: {{ sticky_atc_offset_desktop }}px;
+      --sticky-atc-top-mobile: {{ sticky_atc_offset_mobile }}px;
+    "
+  >
+    {% assign variant = product.selected_or_first_available_variant %}
+    <div class="sticky-atc__inner page-width">
+      <div class="sticky-atc__info-content">
+        <div class="sticky-atc__image" style="--sticky-add-to-cart-image-desktop: {{ sticky_atc_image_size_desktop }}%; --sticky-add-to-cart-image-mobile: {{ sticky_atc_image_size_mobile }}%">
+          {% assign featured_img = variant.image | default: product.featured_image %}
+          {{ featured_img | image_url: width: 400 | image_tag: loading: 'lazy', widths: '80, 120, 160, 200, 240, 300, 400' }}
+        </div>
+        <div class="sticky-atc__info">
+          <div class="sticky-atc-name">
+            <h3>{{ product.title }}</h3>
+          </div>
+          <div class="variant-summary{% if sticky_atc_hide_variants %} show-on-mobile{% endif %}">
+            {{ product.selected_or_first_available_variant.title }}
+          </div>
+          <div class="sticky-atc__price" id="StickyCartPrice">
+            <span class="price price--sale {% unless variant.compare_at_price > variant.price %} hidden{% endunless %}">
+              <span class="price-item price-item--regular">{{ variant.compare_at_price | money }}</span>
+              <span class="price-item price-item--sale">{{ variant.price | money }}</span>
+            </span>
+            <span class="price price--regular {% if variant.compare_at_price > variant.price %} hidden{% endif %}">
+              <span class="price-item price-item--single">{{ variant.price | money }}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="sticky-atc__atc-content">
+        <div class="sticky-atc__variants{% if settings.sticky_cart_hide_variants_on_mobile %} hide-on-mobile{% endif %}">
+          {% for option in product.options_with_values %}
+            <div class="product-form__input">
+              <label>{{ option.name }}</label>
+              <select name="options[{{ option.name }}]" data-option-position="{{ forloop.index }}">
+                {% for value in option.values %}
+                  <option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>{{ value }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="sticky-atc__atc" style="--sticky-atc-bg-color: {{ sticky_atc_btn_bgcolor }}; --sticky-atc-text-color: {{ sticky_atc_btn_textcolor }};">
+          {%- if show_preorder -%}
+            <button type="button" class="button button--primary sticky-atc__submit">
+              <span>{{ 'products.product.pre_order_label' | t }}</span>
+            </button>
+          {%- else -%}
+            <button type="button" class="button button--primary sticky-atc__submit {% unless variant.available %}disabled{% endunless %}" {% unless variant.available %}disabled{% endunless %} data-sold-out="{{ 'products.product.sold_out' | t }}" data-add-to-cart="{{ 'products.product.add_to_cart' | t }}">
+              <span>{% if variant.available %}{{ 'products.product.add_to_cart' | t }}{% else %}{{ 'products.product.sold_out' | t }}{% endif %}</span>
+            </button>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+    {%- if show_preorder and preorder_active and preorder_date != blank -%}
+      <div class="preorder-note page-width center">
+        {% assign expected_date = preorder_date | date: "%A, %B %-d, %Y" %}
+        {{-
+          'products.product.expected_date_label'
+          | t: date: expected_date
+        -}}
+      </div>
+    {%- endif -%}
+    {%- if show_preorder and preorder_active -%}
+      <input type="hidden" id="PreOrderProperty" name="properties[{{ 'products.product.pre_order_label' | t }}]" value="{% if preorder_date != blank %}{{ preorder_date | date: "%A, %B %-d, %Y" }}{% else %}{{ 'products.product.pre_order_label' | t }}{% endif %}">
+    {%- endif -%}
+  </sticky-atc>
+{%- endif -%}

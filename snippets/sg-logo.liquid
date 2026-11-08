@@ -1,0 +1,27 @@
+<section>
+  <h2>Logo</h2>
+
+  <ul class="logos">
+    <li>{{ 'logo.svg' | inline_asset_content }}</li>
+    <li class="black">{{ 'logo.svg' | inline_asset_content }}</li>
+    <li class="white">{{ 'logo.svg' | inline_asset_content }}</li>
+  </ul>
+
+  {%- capture logo_code -%}
+{% raw %}
+&lt;li&gt;{{ &apos;logo.svg&apos; | inline_asset_content }}&lt;/li&gt;
+&lt;li class=&quot;black&quot;&gt;{{ &apos;logo.svg&apos; | inline_asset_content }}&lt;/li&gt;
+&lt;li class=&quot;white&quot;&gt;{{ &apos;logo.svg&apos; | inline_asset_content }}&lt;/li&gt;
+----------
+.black path {
+  fill: var(--color-black);
+}
+
+.white path {
+  fill: var(--color-black);
+}
+{% endraw %}
+  {%- endcapture -%}
+
+  <pre><code>{{ logo_code | strip }}</code></pre>
+</section>

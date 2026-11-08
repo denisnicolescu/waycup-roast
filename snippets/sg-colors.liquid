@@ -1,0 +1,118 @@
+{% assign general = '
+    black,
+    white,
+    soft-blue,
+    light-grey,
+    stone,
+    dark-grey,
+    cobault,
+    sky-blue,
+    teal,
+    orange,
+    yellow,
+    steel-blue,
+    sand
+'
+  | split: ','
+%}
+
+{% assign success = '
+    success-10,
+    success-20,
+    success-40,
+    success-60,
+    success-80,
+    success-100
+'
+  | split: ','
+%}
+
+{% assign info = '
+    info-10,
+    info-20,
+    info-40,
+    info-60,
+    info-80,
+    info-100
+' | split: ',' %}
+
+{% assign warning = '
+    warning-10,
+    warning-20,
+    warning-40,
+    warning-60,
+    warning-80,
+    warning-100
+'
+  | split: ','
+%}
+
+{% assign error = '
+    error-10,
+    error-20,
+    error-40,
+    error-60,
+    error-80,
+    error-100
+' | split: ',' %}
+
+<section>
+  <h2>Colors</h2>
+
+  <pre><code>{% raw %}background-color: var(--color-cobault);{% endraw %}</code></pre>
+
+  <ul class="colors">
+    {% for color in general %}
+      <li class="color">
+        <div class="swatch" style="background-color: var(--color-{{ color | strip }});">
+          <!-- {{ color }} -->
+        </div>
+        <p>{{ color | strip }}</p>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <ul class="colors">
+    {% for color in success %}
+      <li class="color">
+        <div class="swatch" style="background-color: var(--color-{{ color | strip }});">
+          <!-- {{ color }} -->
+        </div>
+        <p>{{ color | strip }}</p>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <ul class="colors">
+    {% for color in info %}
+      <li class="color">
+        <div class="swatch" style="background-color: var(--color-{{ color | strip }});">
+          <!-- {{ color }} -->
+        </div>
+        <p>{{ color | strip }}</p>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <ul class="colors">
+    {% for color in warning %}
+      <li class="color">
+        <div class="swatch" style="background-color: var(--color-{{ color | strip }});">
+          <!-- {{ color }} -->
+        </div>
+        <p>{{ color | strip }}</p>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <ul class="colors">
+    {% for color in error %}
+      <li class="color">
+        <div class="swatch" style="background-color: var(--color-{{ color | strip }});">
+          <!-- {{ color }} -->
+        </div>
+        <p>{{ color | strip }}</p>
+      </li>
+    {% endfor %}
+  </ul>
+</section>

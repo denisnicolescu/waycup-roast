@@ -1,0 +1,632 @@
+{{ 'section-image-hotspots.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'section-image-hotspots.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign first_active_hotspot = blank
+
+  for i in (1..7)
+    assign enabled_key = 'hotspot_' | append: i | append: '_enabled'
+    assign hotspot_enabled = section.settings[enabled_key]
+
+    if hotspot_enabled and first_active_hotspot == blank
+      assign first_active_hotspot = i
+    endif
+  endfor
+
+  if first_active_hotspot == blank
+    assign first_active_hotspot = 1
+  endif
+-%}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="image-hotspots section-{{ section.id }}-padding color-{{ section.settings.color_scheme }}">
+  <div class="page-width">
+    {% if section.settings.heading != blank or section.settings.description != blank %}
+      <div class="image-hotspots__header image-hotspots__header--{{ section.settings.header_alignment }}">
+        {% if section.settings.heading != blank %}
+          <h2 class="image-hotspots__heading {{ section.settings.heading_size }}">
+            {{ section.settings.heading }}
+          </h2>
+        {% endif %}
+
+        {% if section.settings.description != blank %}
+          <div class="image-hotspots__description rte">
+            {{ section.settings.description }}
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <image-hotspots
+      class="image-hotspots__component"
+      data-section-id="{{ section.id }}"
+      data-active-hotspot="{{ first_active_hotspot }}"
+    >
+      <div class="image-hotspots__media">
+        <div class="image-hotspots__image-wrapper">
+          {% if section.settings.image != blank %}
+            {{
+              section.settings.image
+              | image_url: width: 2000
+              | image_tag:
+                loading: 'lazy',
+                widths: '375, 550, 750, 990, 1200, 1500, 2000',
+                sizes: '(min-width: 990px) 66vw, 100vw',
+                class: 'image-hotspots__image',
+                alt: section.settings.image.alt
+            }}
+          {% else %}
+            <div class="image-hotspots__placeholder">
+              {{ 'image' | placeholder_svg_tag }}
+            </div>
+          {% endif %}
+
+          {% for i in (1..7) %}
+            {%- liquid
+              assign enabled_key = 'hotspot_' | append: i | append: '_enabled'
+              assign x_key = 'hotspot_' | append: i | append: '_x'
+              assign y_key = 'hotspot_' | append: i | append: '_y'
+              assign title_key = 'hotspot_' | append: i | append: '_title'
+              assign product_key = 'hotspot_' | append: i | append: '_product'
+
+              assign hotspot_enabled = section.settings[enabled_key]
+              assign hotspot_x = section.settings[x_key]
+              assign hotspot_y = section.settings[y_key]
+              assign hotspot_title = section.settings[title_key]
+              assign hotspot_product = section.settings[product_key]
+            -%}
+
+            {% if hotspot_enabled %}
+              <button
+                type="button"
+                class="image-hotspots__button{% if i == first_active_hotspot %} is-active{% endif %}"
+                style="--hotspot-x: {{ hotspot_x }}%; --hotspot-y: {{ hotspot_y }}%;"
+                data-hotspot-trigger="{{ i }}"
+                aria-controls="ImageHotspotPanel-{{ section.id }}-{{ i }}"
+                aria-expanded="{% if i == first_active_hotspot %}true{% else %}false{% endif %}"
+              >
+                <span class="image-hotspots__button-number">{{ i }}</span>
+                <span class="visually-hidden">
+                  {% if hotspot_title != blank %}
+                    {{ hotspot_title }}
+                  {% elsif hotspot_product != blank %}
+                    {{ hotspot_product.title }}
+                  {% else %}
+                    View hotspot {{ i }}
+                  {% endif %}
+                </span>
+              </button>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="image-hotspots__content">
+        {% for i in (1..7) %}
+          {%- liquid
+            assign enabled_key = 'hotspot_' | append: i | append: '_enabled'
+            assign title_key = 'hotspot_' | append: i | append: '_title'
+            assign description_key = 'hotspot_' | append: i | append: '_description'
+            assign product_key = 'hotspot_' | append: i | append: '_product'
+
+            assign hotspot_enabled = section.settings[enabled_key]
+            assign hotspot_title = section.settings[title_key]
+            assign hotspot_description = section.settings[description_key]
+            assign hotspot_product = section.settings[product_key]
+          -%}
+
+          {% if hotspot_enabled %}
+            <div
+              id="ImageHotspotPanel-{{ section.id }}-{{ i }}"
+              class="image-hotspots__panel{% if i == first_active_hotspot %} is-active{% endif %}"
+              data-hotspot-panel="{{ i }}"
+              {% unless i == first_active_hotspot %}
+                hidden
+              {% endunless %}
+            >
+              <p class="image-hotspots__eyebrow">
+                {{ section.settings.hotspot_label | default: 'Hotspot' }}
+                {{ i }}
+              </p>
+
+              {% if hotspot_title != blank %}
+                <h3 class="image-hotspots__title">
+                  {{ hotspot_title }}
+                </h3>
+              {% endif %}
+
+              {% if hotspot_description != blank %}
+                <div class="image-hotspots__text rte">
+                  {{ hotspot_description }}
+                </div>
+              {% endif %}
+
+              {% if hotspot_product != blank %}
+                <a href="{{ hotspot_product.url }}" class="image-hotspots__product">
+                  {% if hotspot_product.featured_image != blank %}
+                    <div class="image-hotspots__product-image-wrapper">
+                      {{
+                        hotspot_product.featured_image
+                        | image_url: width: 320
+                        | image_tag:
+                          loading: 'lazy',
+                          widths: '160, 240, 320',
+                          sizes: '120px',
+                          class: 'image-hotspots__product-image',
+                          alt: hotspot_product.featured_image.alt
+                      }}
+                    </div>
+                  {% endif %}
+
+                  <div class="image-hotspots__product-content">
+                    <p class="image-hotspots__product-title">
+                      {{ hotspot_product.title }}
+                    </p>
+
+                    <p class="image-hotspots__product-price">
+                      {% if hotspot_product.price_varies %}
+                        From {{ hotspot_product.price_min | money }}
+                      {% else %}
+                        {{ hotspot_product.price | money }}
+                      {% endif %}
+                    </p>
+                  </div>
+                </a>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </image-hotspots>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Image hotspots",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Image hotspots"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "Small"
+        },
+        {
+          "value": "h1",
+          "label": "Medium"
+        },
+        {
+          "value": "h0",
+          "label": "Large"
+        }
+      ],
+      "default": "h1"
+    },
+    {
+      "type": "select",
+      "id": "header_alignment",
+      "label": "Heading and description alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Add supporting text for the image hotspot section.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "hotspot_label",
+      "label": "Hotspot label",
+      "default": "Hotspot"
+    },
+    {
+      "type": "header",
+      "content": "Hotspot 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "hotspot_1_enabled",
+      "label": "Enable hotspot 1",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "hotspot_1_x",
+      "label": "Horizontal position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "hotspot_1_y",
+      "label": "Vertical position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 30
+    },
+    {
+      "type": "text",
+      "id": "hotspot_1_title",
+      "label": "Title",
+      "default": "Hotspot title"
+    },
+    {
+      "type": "richtext",
+      "id": "hotspot_1_description",
+      "label": "Description",
+      "default": "<p>Add the description for this hotspot.</p>"
+    },
+    {
+      "type": "product",
+      "id": "hotspot_1_product",
+      "label": "Product"
+    },
+    {
+      "type": "header",
+      "content": "Hotspot 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "hotspot_2_enabled",
+      "label": "Enable hotspot 2",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "hotspot_2_x",
+      "label": "Horizontal position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 35
+    },
+    {
+      "type": "range",
+      "id": "hotspot_2_y",
+      "label": "Vertical position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 45
+    },
+    {
+      "type": "text",
+      "id": "hotspot_2_title",
+      "label": "Title",
+      "default": "Hotspot title"
+    },
+    {
+      "type": "richtext",
+      "id": "hotspot_2_description",
+      "label": "Description",
+      "default": "<p>Add the description for this hotspot.</p>"
+    },
+    {
+      "type": "product",
+      "id": "hotspot_2_product",
+      "label": "Product"
+    },
+    {
+      "type": "header",
+      "content": "Hotspot 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "hotspot_3_enabled",
+      "label": "Enable hotspot 3",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "hotspot_3_x",
+      "label": "Horizontal position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "hotspot_3_y",
+      "label": "Vertical position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 35
+    },
+    {
+      "type": "text",
+      "id": "hotspot_3_title",
+      "label": "Title",
+      "default": "Hotspot title"
+    },
+    {
+      "type": "richtext",
+      "id": "hotspot_3_description",
+      "label": "Description",
+      "default": "<p>Add the description for this hotspot.</p>"
+    },
+    {
+      "type": "product",
+      "id": "hotspot_3_product",
+      "label": "Product"
+    },
+    {
+      "type": "header",
+      "content": "Hotspot 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "hotspot_4_enabled",
+      "label": "Enable hotspot 4",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "hotspot_4_x",
+      "label": "Horizontal position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 65
+    },
+    {
+      "type": "range",
+      "id": "hotspot_4_y",
+      "label": "Vertical position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 55
+    },
+    {
+      "type": "text",
+      "id": "hotspot_4_title",
+      "label": "Title",
+      "default": "Hotspot title"
+    },
+    {
+      "type": "richtext",
+      "id": "hotspot_4_description",
+      "label": "Description",
+      "default": "<p>Add the description for this hotspot.</p>"
+    },
+    {
+      "type": "product",
+      "id": "hotspot_4_product",
+      "label": "Product"
+    },
+    {
+      "type": "header",
+      "content": "Hotspot 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "hotspot_5_enabled",
+      "label": "Enable hotspot 5",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "hotspot_5_x",
+      "label": "Horizontal position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 78
+    },
+    {
+      "type": "range",
+      "id": "hotspot_5_y",
+      "label": "Vertical position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 35
+    },
+    {
+      "type": "text",
+      "id": "hotspot_5_title",
+      "label": "Title",
+      "default": "Hotspot title"
+    },
+    {
+      "type": "richtext",
+      "id": "hotspot_5_description",
+      "label": "Description",
+      "default": "<p>Add the description for this hotspot.</p>"
+    },
+    {
+      "type": "product",
+      "id": "hotspot_5_product",
+      "label": "Product"
+    },
+    {
+      "type": "header",
+      "content": "Hotspot 6"
+    },
+    {
+      "type": "checkbox",
+      "id": "hotspot_6_enabled",
+      "label": "Enable hotspot 6",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "hotspot_6_x",
+      "label": "Horizontal position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 42
+    },
+    {
+      "type": "range",
+      "id": "hotspot_6_y",
+      "label": "Vertical position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 70
+    },
+    {
+      "type": "text",
+      "id": "hotspot_6_title",
+      "label": "Title",
+      "default": "Hotspot title"
+    },
+    {
+      "type": "richtext",
+      "id": "hotspot_6_description",
+      "label": "Description",
+      "default": "<p>Add the description for this hotspot.</p>"
+    },
+    {
+      "type": "product",
+      "id": "hotspot_6_product",
+      "label": "Product"
+    },
+    {
+      "type": "header",
+      "content": "Hotspot 7"
+    },
+    {
+      "type": "checkbox",
+      "id": "hotspot_7_enabled",
+      "label": "Enable hotspot 7",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "hotspot_7_x",
+      "label": "Horizontal position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "hotspot_7_y",
+      "label": "Vertical position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 78
+    },
+    {
+      "type": "text",
+      "id": "hotspot_7_title",
+      "label": "Title",
+      "default": "Hotspot title"
+    },
+    {
+      "type": "richtext",
+      "id": "hotspot_7_description",
+      "label": "Description",
+      "default": "<p>Add the description for this hotspot.</p>"
+    },
+    {
+      "type": "product",
+      "id": "hotspot_7_product",
+      "label": "Product"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image hotspots"
+    }
+  ]
+}
+{% endschema %}
