@@ -7,7 +7,7 @@ function start_webpack {
 
 function run_shopify_dev {
     echo "Starting Shopify theme dev..."
-    shopify theme dev --store=bluebird-gpmd.myshopify.com --port=9393
+    shopify theme dev --store=waycup-roast.myshopify.com --port=9393
 }
 
 # Run webpack without watch first to make sure we build it

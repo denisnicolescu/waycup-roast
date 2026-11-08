@@ -13,3 +13,4 @@ assets/.gitignore
 node_modules/
 *.min.css
 .shopify
+.env
